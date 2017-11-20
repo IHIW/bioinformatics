@@ -1,0 +1,10 @@
+Package: hlaPoly
+Type: Package
+Title: What the package does (short line)
+Version: 0.57
+Date: 2017-04-10
+Author: Chia-Jung Chang
+Maintainer: Chia-Jung Chang <chiajung@stanford.edu>
+Description: More about what it does (maybe more than one line)
+License: Free
+Depends: DECIPHER

@@ -1,0 +1,48 @@
+require("plyr")
+
+read.fusion_xls<-function(fusion_file){
+	require("xlsx")
+	tmp<-read.xlsx(fusion_file,1,header=F,stringsAsFactors=F)
+	sampleid=tmp$X2[1]
+	epitope_session<-tmp$X7[3]
+	catelog<-tmp$X7[4]
+	nc_bead<-tmp$X7[5]
+	test_date<-tmp$X39[3]
+	formula<-tmp$X39[4]
+	threshold<-tmp$X39[5]
+	lastcolumn=36
+	if(is.null(threshold) || is.na(threshold)){
+		test_date<-tmp$X40[3]
+		formula<-tmp$X40[4]
+		threshold<-tmp$X40[5]
+		lastcolumn=37
+	}
+	pos<-tmp$X32[3]
+	nc_sample<-tmp$X18[5]
+	eversion<-sub("™","",tmp$X8[nrow(tmp)-1])
+	fusion_profile<-data.frame(sampleid=sampleid,epitope_session=epitope_session,catelog=catelog,nc_bead=nc_bead,
+	test_date=test_date,formula=formula,threshold=threshold,pos=pos,nc_sample=nc_sample,eversion=eversion,
+	stringsAsFactors=F)
+	fusion_data<-tmp[c(8:(nrow(tmp)-3)),c(1,4,9,12,13,16,21,23,27,30,lastcolumn)]
+	colnames(fusion_data)=c("beadid","raw_value","sample_nc","ns_raw","nsnc","normal","ratio","rxn","count","specificity","allele_specificity")
+	fusion_data$rxn[fusion_data$rxn=="NC"]=0
+	fusion_data$rxn[fusion_data$rxn=="PC"]=16
+	fusion_data$ratio=sub(",",".",fusion_data$ratio)
+	fusion_data$raw_value=sub(",",".",fusion_data$raw_value)
+	fusion_data$sample_nc=sub(",",".",fusion_data$sample_nc)
+	fusion_data$ns_raw=sub(",",".",fusion_data$ns_raw)
+	fusion_data$nsnc=sub(",",".",fusion_data$nsnc)
+	fusion_data$normal=sub(",",".",fusion_data$normal)
+	fusion_data$beadid=paste("X",fusion_data$beadid,sep="")
+	ids=unlist(strsplit(fusion_profile$sampleid,"_"))
+	samid=strtoi(sub("H","0x",ids[1]))
+	testdate=as.numeric(ids[3])
+	fusion_data$samid=samid
+	fusion_data$testdate=testdate
+	fusion_data$sampleid=fusion_profile$sampleid
+	fusion_profile$samid=samid
+	fusion_profile$testdate=testdate
+	f=unlist(strsplit(fusion_file,"/"))
+	fusion_profile$filepath=f[length(f)-1]
+	list(fusion_data=fusion_data,fusion_profile=fusion_profile)
+}
