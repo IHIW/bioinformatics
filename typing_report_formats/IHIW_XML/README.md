@@ -8,6 +8,7 @@ Meta-data include laboratory, report and specimen identifiers; documentation of 
 
 ##
 IHIW XML was developed for the collection of NGS HLA Typing Reports generated as part of the 17th International HLA and 
-Immunogenetics Workshop effort. The IHIW XML Typing Report Schema (v1.4) and associated XSD are available in this repository.
+Immunogenetics Workshop effort. 
+The [IHIW XML Typing Report Schema (v1.4) ](https://github.com/IHIW/bioinformatics/blob/master/typing_report_formats/IHIW_XML/IHIW_XML_Schema_v1.4.txt) and associated [IHIW XML XSD](https://github.com/IHIW/bioinformatics/blob/master/typing_report_formats/IHIW_XML/current_ws_xml.xsd) are available in this repository.
 
 
