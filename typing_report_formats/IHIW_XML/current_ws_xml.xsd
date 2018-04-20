@@ -1,0 +1,178 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="IHIW_Report">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Lab"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Lab">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Software_Applied"/>
+        <xs:element ref="Hardware_Used" maxOccurs="unbounded" minOccurs="0"/>
+        <xs:element ref="Reagent_Protocol"/>
+        <xs:element ref="Sample"/>
+      </xs:sequence>
+      <xs:attribute type="xs:string" name="LabCode"/>
+      <xs:attribute type="xs:string" name="Lab_defined_ID"/>
+    </xs:complexType>
+  </xs:element> 
+  <xs:element name="Software_Applied">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="Software_Manufacturer"/>
+          <xs:attribute type="xs:string" name="Software_Name"/>
+          <xs:attribute type="xs:string" name="Software_Parameters"/>
+          <xs:attribute type="xs:string" name="Software_Version"/>
+           <xs:attribute  name="Software_Functions">
+			<xs:simpleType>
+    			<xs:restriction base="xs:string">
+      				<xs:pattern value="((Read Processing|Base Calling/Consensus Generation|Allele Calling):?)*"/>
+    			</xs:restriction>
+  			</xs:simpleType>
+		   </xs:attribute>      
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Hardware_Used">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="Instrument_Firmware" use="optional"/>
+          <xs:attribute type="xs:string" name="Instrument_Model_Number" use="optional"/>
+          <xs:attribute type="xs:string" name="Instrument_name" use="optional"/>
+          <xs:attribute type="xs:string" name="Manufacturer" use="optional"/>
+          <xs:attribute  name="Typing_Method" use="optional">
+			<xs:simpleType>
+    		<xs:restriction base="xs:string"> 
+          		<xs:enumeration value="Other —Secondary Typing Method" />
+				<xs:enumeration value="Sanger-Sequencing Based Typing (PCR-SBT)" />
+				<xs:enumeration value="Sequence Specific Oligonucleotide Probes (PCR-SSOP)" />
+				<xs:enumeration value="Reverse Sequence Specific Oligonucleotide Probes (PCR-rSSOP)" />
+				<xs:enumeration value="Sequence Specific Priming (PCR-SSP)" />
+				<xs:enumeration value="Next Generation Sequencing (NGS) — targeted amplicon sequencing" />
+				<xs:enumeration value="Phased Sanger-Sequence Based Typing — phased via chromosomal isolation (PCR-pSBT)" />
+				<xs:enumeration value="Other - NGS" />
+				<xs:enumeration value="Next Generation Sequencing (NGS) — shotgun assembly" />
+				<xs:enumeration value="Single Molecule Sequencing (SMS)" />
+			</xs:restriction>
+  			</xs:simpleType>
+  		</xs:attribute>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Reagent_Protocol">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="Protocol_Name"/>
+          <xs:attribute type="xs:string" name="Protocol_Source"/>
+          <xs:attribute type="xs:string" name="Protocol_External_Identifier"/>
+          <xs:attribute type="xs:string" name="Protocol_Internal_identifier"/>
+          <xs:attribute type="xs:string" name="Protocol_Deviations"/>
+          <xs:attribute  name="Specific_Loci">
+          	<xs:simpleType>   
+    		<xs:restriction base="xs:string">
+      				<xs:pattern value="((HLA-A|HLA-B|HLA-C|HLA-DRB1|HLA-DRB3|HLA-DRB4|HLA-DRB5|HLA-DQA1|HLA-DQB1|HLA-DPA1|HLA-DPB1):?)+"/>
+    		</xs:restriction>        
+  			</xs:simpleType>
+  			</xs:attribute>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Sample">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Genotyping"/>
+      </xs:sequence>
+      <xs:attribute type="xs:string" name="SampleID"/>
+    </xs:complexType>
+  </xs:element> 
+   <xs:element name="Genotyping">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Locus"/>
+      </xs:sequence>
+      <xs:attribute type="xs:string" name="Genotype_GL"/>
+    </xs:complexType>
+  </xs:element>
+    <xs:element name="Locus">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="HLATyping"/>
+          <xs:attribute type="xs:string" name="Alignment_Reference_DB"/>
+          <xs:attribute type="xs:string" name="AlleleCalling_Reference_DB"/>
+          <xs:attribute  name="Consensus_Sequence">
+			<xs:simpleType>
+    			<xs:restriction base="xs:string">
+      				<xs:pattern value="([\sACGTUMRWSYKVHDBXNacgtumrwsykvhdbxn])+"/>
+    			</xs:restriction>
+  			</xs:simpleType>
+		</xs:attribute>
+	    <xs:attribute  name="Feature">
+	    	<xs:simpleType>
+    		<xs:restriction base="xs:string">
+      			<xs:enumeration value="Nucleotide - CDS" />
+				<xs:enumeration value="Nucleotide - Exon 1" />
+				<xs:enumeration value="Nucleotide - Exon 2" />
+				<xs:enumeration value="Nucleotide - Exon 3" />
+				<xs:enumeration value="Nucleotide - Exon 4" />
+				<xs:enumeration value="Nucleotide - Exon 5" />
+				<xs:enumeration value="Nucleotide - Exon 6" />
+				<xs:enumeration value="Nucleotide - Exon 7" />
+				<xs:enumeration value="Nucleotide - Exon 8" />
+				<xs:enumeration value="Nucleotide - Exon 2+3" />
+				<xs:enumeration value="Nucleotide - Exon 2+3+4" />
+				<xs:enumeration value="Protein - Signal Peptide" />
+				<xs:enumeration value="Protein - Mature Protein" />
+				<xs:enumeration value="Protein - Full Length Protein" />
+				<xs:enumeration value="Genomic - Full Length" />
+				<xs:enumeration value="Genomic - Unknown Location" />
+				<xs:enumeration value="Genomic - 5' UTR" />
+				<xs:enumeration value="Genomic - Intron 1" />
+				<xs:enumeration value="Genomic - Intron 2" />
+				<xs:enumeration value="Genomic - Intron 3" />
+				<xs:enumeration value="Genomic - Intron 4" />
+				<xs:enumeration value="Genomic - Intron 5" />
+				<xs:enumeration value="Genomic - Intron 6" />
+				<xs:enumeration value="Genomic - Intron 7" />
+				<xs:enumeration value="Genomic - Intron 1 to Intron 2" />
+				<xs:enumeration value="Genomic - Intron 1 to Intron 3" />
+				<xs:enumeration value="Genomic - 3' UTR" />
+    		</xs:restriction>
+ 			 </xs:simpleType>
+ 		 </xs:attribute>
+
+          <xs:attribute name="Locus_name">
+   			<xs:simpleType>
+    		<xs:restriction base="xs:string">         
+          		<xs:enumeration value="HLA-A" />
+				<xs:enumeration value="HLA-B" />
+				<xs:enumeration value="HLA-C" />
+				<xs:enumeration value="HLA-DRB1" />
+				<xs:enumeration value="HLA-DRB3" />
+				<xs:enumeration value="HLA-DRB4" />
+				<xs:enumeration value="HLA-DRB5" />
+				<xs:enumeration value="HLA-DQA1" />
+				<xs:enumeration value="HLA-DQB1" />
+				<xs:enumeration value="HLA-DPA1" />
+				<xs:enumeration value="HLA-DPB1" />
+   			</xs:restriction>
+  			</xs:simpleType>
+  			</xs:attribute>       
+          <xs:attribute type="xs:short" name="MeanReadDepth"/>
+          <xs:attribute type="xs:string" name="DataFileLoc"/>
+          <xs:attribute type="xs:byte" name="PhasingGroup"/>
+          <xs:attribute type="xs:short" name="Start_Position"/>
+          <xs:attribute type="xs:string" name="NovelPolymorphism"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
