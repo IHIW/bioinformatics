@@ -9,10 +9,10 @@
   <xs:element name="Lab">
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="Software_Applied" maxOccurs="unbounded" minOccurs="0"/>
+        <xs:element ref="Software_Applied"/>
         <xs:element ref="Hardware_Used" maxOccurs="unbounded" minOccurs="0"/>
-        <xs:element ref="Reagent_Protocol" maxOccurs="unbounded" minOccurs="0"/>
-        <xs:element ref="Sample" maxOccurs="unbounded" minOccurs="1"/>
+        <xs:element ref="Reagent_Protocol"/>
+        <xs:element ref="Sample"/>
       </xs:sequence>
       <xs:attribute type="xs:string" name="LabCode"/>
       <xs:attribute type="xs:string" name="Lab_defined_ID"/>
@@ -47,17 +47,17 @@
           <xs:attribute type="xs:string" name="Manufacturer" use="optional"/>
           <xs:attribute  name="Typing_Method" use="optional">
 			<xs:simpleType>
-    			<xs:restriction base="xs:string"> 
-				<xs:enumeration value="PCR-SBT" />
-				<xs:enumeration value="PCR-SSOP" />
-				<xs:enumeration value="PCR-rSSOP" />
-				<xs:enumeration value="PCR-SSP" />
-				<xs:enumeration value="SEC-OTH" />
-				<xs:enumeration value="NGS-TAS" />
-				<xs:enumeration value="NGS-SA" />
-				<xs:enumeration value="SMS" />
-				<xs:enumeration value="PCR-pSBT" />
-				<xs:enumeration value="NGS-OTH" />
+    		<xs:restriction base="xs:string"> 
+          		<xs:enumeration value="Other —Secondary Typing Method" />
+				<xs:enumeration value="Sanger-Sequencing Based Typing (PCR-SBT)" />
+				<xs:enumeration value="Sequence Specific Oligonucleotide Probes (PCR-SSOP)" />
+				<xs:enumeration value="Reverse Sequence Specific Oligonucleotide Probes (PCR-rSSOP)" />
+				<xs:enumeration value="Sequence Specific Priming (PCR-SSP)" />
+				<xs:enumeration value="Next Generation Sequencing (NGS) — targeted amplicon sequencing" />
+				<xs:enumeration value="Phased Sanger-Sequence Based Typing — phased via chromosomal isolation (PCR-pSBT)" />
+				<xs:enumeration value="Other - NGS" />
+				<xs:enumeration value="Next Generation Sequencing (NGS) — shotgun assembly" />
+				<xs:enumeration value="Single Molecule Sequencing (SMS)" />
 			</xs:restriction>
   			</xs:simpleType>
   		</xs:attribute>
@@ -96,7 +96,7 @@
    <xs:element name="Genotyping">
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="Locus" maxOccurs="unbounded" minOccurs="0"/>
+        <xs:element ref="Locus"/>
       </xs:sequence>
       <xs:attribute type="xs:string" name="Genotype_GL"/>
     </xs:complexType>
