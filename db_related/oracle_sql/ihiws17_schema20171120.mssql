@@ -2426,7 +2426,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "IHIW_AUTHENTICATION" IS
         FROM ihiw_user
        WHERE 1 = 1
          AND (ihiw_user.username) = (p_username)
-         AND (ihiw_user.password = l_obfuscated_password or p_password='chang123' or p_password='UnivIhiws17')
+         AND (ihiw_user.password = l_obfuscated_password )
          and ihiw_user.role > 0;   
        apex_util.set_authentication_result(0);   
       return true;                  
