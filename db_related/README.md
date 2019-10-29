@@ -38,3 +38,12 @@ Usage:
 >hlaGetNovel(hladata,"HLA-DPA1*01:03:01:01",seq)
 ```
 
+To use a specific version of IMGT/HLA
+
+1. Create a folder with the version name in hlaPoly/inst/hlalib/, e.g. 
+```
+mkdir hlaPoly/inst/hlalib/3.34.0
+```
+2. Copy two files: hla_gen.fasta and hla_nuc.fasta from https://github.com/ANHIG/IMGTHLA to the new folder
+
+
