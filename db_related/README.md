@@ -20,3 +20,11 @@ After the installation and the successful login as a privileged user into Oracle
 ## scripts
 
 ## hlaPoly
+
+Install package:
+Change folder to db_related/
+In R
+>install.packages("hlaPoly",repos = NULL, type="source")
+
+
+
