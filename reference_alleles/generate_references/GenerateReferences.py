@@ -134,16 +134,13 @@ if __name__ == '__main__':
     databaseVersion='3.42.0'
     printSequences(alleleSequences=alleleSequences, outputFilename=join(outputDirectory,'FullLengthSequences.fasta'), verbose=verbose)
     alleleSequenceClusters=clusterSequences(alleleSequences=alleleSequences)
+    # TODO: Get Description from Previous reference lists.
     previousReferenceSequences = parsePreviousReferences(referenceSequenceFileName=args.allelelist, verbose=verbose)
     newReferenceSequences = createReferenceSequences(clusteredFullLenAlleleSequences=alleleSequenceClusters, previousReferenceSequences=previousReferenceSequences, verbose=verbose)
-
-    # Print Reference Sequences to fasta.
     printSequences(alleleSequences=newReferenceSequences, outputFilename=join(outputDirectory, 'ReferenceSequences.fasta'), verbose=verbose)
-
-    # Print Reference Sequence List to txt.
     printSequenceList(alleleSequences=newReferenceSequences, databaseVersion=databaseVersion, outputDirectory=outputDirectory, verbose=verbose)
 
-    # Align Reference Sequences
+    # TODO: Align Reference Sequences
         # For each reference sequence
             # Find corresponding full-length sequences
             # Align them.
