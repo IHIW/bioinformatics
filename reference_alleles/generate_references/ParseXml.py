@@ -6,6 +6,9 @@ from AlleleSequence import AlleleSequence
 
 def parseXmlFile(xmlFile=None, fullLengthOnly=True, verbose=False):
     print('Parsing this IPD-IMGT/HLA input file:' + str(xmlFile))
+    databaseVersion = None
+
+
     if(xmlFile is None or not isfile(xmlFile)):
         raise Exception ('Specify the input IPD-IMGT/HLA input file:' + str(xmlFile))
 
@@ -19,6 +22,21 @@ def parseXmlFile(xmlFile=None, fullLengthOnly=True, verbose=False):
         currentAllele.accessionNumber =alleleNode.get('id')
         if(currentAllele.accessionNumber is None or len(currentAllele.accessionNumber)<1):
             raise Exception('No id/accession number found for allele ' + str(currentAllele.alleleName))
+
+        # Find the release version
+        releaseList = alleleNode.findall('{http://hla.alleles.org/xml}releaseversions')
+        currentReleaseVersion = releaseList[0].get('currentrelease')
+        # Every allele has one, I think.
+        if(len(releaseList) != 1 or currentReleaseVersion is None or len(currentReleaseVersion) < 1):
+            raise Exception('Allele ' + str(currentAllele.alleleName) + ' does not have exactly one releaseversions node.')
+
+        if(databaseVersion is None):
+            databaseVersion = currentReleaseVersion
+        elif(databaseVersion == currentReleaseVersion):
+            # already assigned, we're good.
+            pass
+        else:
+            raise Exception('Two alleles have mismatched IPD-IMGT/HLA Database versions:' + str(databaseVersion) + ' and ' + str(currentReleaseVersion))
 
         sequenceList = alleleNode.findall('{http://hla.alleles.org/xml}sequence')
 
@@ -72,10 +90,12 @@ def parseXmlFile(xmlFile=None, fullLengthOnly=True, verbose=False):
         if(not fullLengthOnly or currentAllele.isFullLength()):
             alleleSequences.append(currentAllele)
 
-    return alleleSequences
 
-def clusterSequences(alleleSequences=None):
-    print('Clustering ' + str(len(alleleSequences)) + ' Allele Sequences by Locus and Group.')
+    return alleleSequences, databaseVersion
+
+def clusterSequences(alleleSequences=None, verbose=False):
+    if(verbose):
+        print('Clustering ' + str(len(alleleSequences)) + ' Allele Sequences by Locus and Group.')
     # Create Dictionary clusteredSequences[locus][group]
     # containing list of allele sequences
     clusteredSequences = {}
@@ -115,8 +135,9 @@ def parsePreviousReferences(referenceSequenceFileName=None, verbose=False):
             else:
                 accession, locus, alleleName, description = textLine.strip().split('\t')
                 referenceAllele = AlleleSequence()
-                referenceAllele.accession=accession
-                referenceAllele.alleleName=alleleName
+                referenceAllele.accession = accession
+                referenceAllele.alleleName = alleleName
+                referenceAllele.description = description
 
                 referenceSequenceNames.append(referenceAllele)
 
