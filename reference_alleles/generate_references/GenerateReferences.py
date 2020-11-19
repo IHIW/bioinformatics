@@ -1,7 +1,9 @@
 import argparse
-from os.path import join, isdir
-from os import makedirs
+from os.path import join, isdir, isfile
+from os import makedirs, remove, rmdir
 from datetime import datetime
+from requests import get
+from zipfile import ZipFile
 from random import shuffle
 
 from ParseXml import parseXmlFile, clusterSequences, parsePreviousReferences
@@ -148,12 +150,51 @@ def createReferenceSequences(clusteredFullLenAlleleSequences=None, previousRefer
     return referenceSequences, missingSequences
 
 
+def downloadImgtXml(outputDirectory=None, release=None, verbose=False):
+    print('Downloading IPD-IMGT/HLA xml file for release ' + str(release))
+
+    zipLocalFileName = join(outputDirectory, 'hla.xml.zip')
+    xmlLocalFileName = join(outputDirectory, 'hla.xml')
+    zipRemoteFileName = 'https://raw.githubusercontent.com/ANHIG/IMGTHLA/' + release.replace('.','') + '/xml/hla.xml.zip'
+
+    # This is a hack. Because the 3.35.0 release was uploaded to github using lfs, the normal url doesn't work.
+    # Todo: check for this, somehow, and respond in a smart way.
+    if(release=='3.35.0'):
+        zipRemoteFileName = 'https://github.com/ANHIG/IMGTHLA/raw/3350/xml/hla.xml.zip'
+
+    if(verbose):
+        print('Local xml filename:' + str(xmlLocalFileName))
+        print('Remote zip filename:' + str(zipRemoteFileName))
+
+    requestData = get(zipRemoteFileName, allow_redirects=True)
+    open(zipLocalFileName, 'wb').write(requestData.content)
+
+    with ZipFile(zipLocalFileName, 'r') as zipObj:
+        zipObj.extract('hla.xml', path=outputDirectory)
+
+    if(isfile(xmlLocalFileName)):
+        return xmlLocalFileName
+    else:
+        raise Exception('Problem when downloading and unzipping IMGT XML:' + str(zipRemoteFileName))
+
+
+def cleanupSupplementalFiles(keepSuppFiles=False, supplementalFileDirectory=None):
+    if(not keepSuppFiles):
+        # delete the zip file and the xml file.
+        zipFileName = join(supplementalFileDirectory, 'hla.xml.zip')
+        xmlFileName = join(supplementalFileDirectory, 'hla.xml')
+        remove(zipFileName)
+        remove(xmlFileName)
+        rmdir(supplementalFileDirectory)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-v", "--verbose", help="verbose operation", action="store_true")
+    parser.add_argument("-s", "--supplementary", help="keep supplementary files", action="store_true", default=False)
     parser.add_argument("-V", "--validate", help="validate full-length sequences by aligning against References", action="store_true")
-    parser.add_argument("-x", "--xml", required=True, help="path to IPD-IMGT/HLA xml file", type=str)
+    parser.add_argument("-r", "--release", required=True, help="IPD-IMGT/HLA release version", type=str)
     parser.add_argument("-o", "--output", required=True, help="Output Directory", type=str)
     parser.add_argument("-a", "--allelelist", required=False, help="Previous Allele List", type=str)
     parser.add_argument("-t", "--threads", required=False, help="Processor Threads", type=int)
@@ -166,28 +207,39 @@ if __name__ == '__main__':
         threadCount = 1
 
     outputDirectory = args.output
+    supplementalFileDirectory = join(outputDirectory,'supplemental_files')
+
     if not isdir(outputDirectory):
         makedirs(outputDirectory)
+    if not isdir(supplementalFileDirectory):
+        makedirs(supplementalFileDirectory)
 
     print('Generating Reference Sequences')
 
     if verbose:
         print("Running in verbose mode.")
 
-    alleleSequences, databaseVersion = parseXmlFile(xmlFile=args.xml,fullLengthOnly=True, verbose=verbose)
-    printSequences(alleleSequences=alleleSequences, outputFilename=join(outputDirectory,str(databaseVersion) + '_FullLengthSequences.fasta'), verbose=verbose)
+    xmlFileLocation = downloadImgtXml(outputDirectory=supplementalFileDirectory, release=args.release, verbose=verbose)
+    alleleSequences, databaseVersion = parseXmlFile(xmlFile=xmlFileLocation,fullLengthOnly=True, verbose=verbose)
+    # TODO: The database version from the XML file may be slightly different than the provided release number, due to minor versioning.
+    #  I am naming files based on the "0" version but there might be 3.42.1 for example.
+    #  Not completely accurate but its more consistent this way. May cause confusion.
+    if(databaseVersion != args.release):
+        print('Warning! the latest IMGT/HLA xml file shows a different (newer?) release date ('
+              + str(databaseVersion) + ') than the provided release version (' + str(args.release) + ')')
+    if(args.supplementary):
+        printSequences(alleleSequences=alleleSequences, outputFilename=join(supplementalFileDirectory,str(args.release) + '_FullLengthSequences.fasta'), verbose=verbose)
     alleleSequenceClusters=clusterSequences(alleleSequences=alleleSequences,verbose=verbose)
-    # TODO: Get Description from Previous reference lists.
     previousReferenceSequences = parsePreviousReferences(referenceSequenceFileName=args.allelelist, verbose=verbose)
-    # TODO: Output missing sequences from this version. What could I not find from previous version?
     newReferenceSequences, missingSequences = createReferenceSequences(clusteredFullLenAlleleSequences=alleleSequenceClusters, previousReferenceSequences=previousReferenceSequences, verbose=verbose)
-    printSequences(alleleSequences=newReferenceSequences, outputFilename=join(outputDirectory, str(databaseVersion) + '_ReferenceSequences.fasta'), verbose=verbose)
-    printSequenceList(alleleSequences=newReferenceSequences, databaseVersion=databaseVersion, outputDirectory=outputDirectory, verbose=verbose)
-    printMissingSequences(missingSequences=missingSequences, databaseVersion=databaseVersion, outputDirectory=outputDirectory, verbose=verbose)
+    printSequences(alleleSequences=newReferenceSequences, outputFilename=join(outputDirectory, str(args.release) + '_ReferenceSequences.fasta'), verbose=verbose)
+    printSequenceList(alleleSequences=newReferenceSequences, databaseVersion=args.release, outputDirectory=outputDirectory, verbose=verbose)
+    if (args.supplementary):
+        printMissingSequences(missingSequences=missingSequences, databaseVersion=args.release, outputDirectory=supplementalFileDirectory, verbose=verbose)
     if(args.validate):
         validationSet = alleleSequences
         validateFullLengthSequences(referenceSequences=newReferenceSequences, fullLengthSequences=validationSet
-            , outputDirectory=outputDirectory, verbose=verbose, threadCount=threadCount)
-
+            , outputDirectory=outputDirectory, verbose=verbose, threadCount=threadCount, keepSuppFiles=args.supplementary)
+    cleanupSupplementalFiles(keepSuppFiles=args.supplementary, supplementalFileDirectory=supplementalFileDirectory)
     print('Done. Reference Sequences were written to ' + str(outputDirectory))
 

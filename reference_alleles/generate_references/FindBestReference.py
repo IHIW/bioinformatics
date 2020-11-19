@@ -58,13 +58,15 @@ def findBestReferenceSequence(referenceFileName=None, batchFileName=None, verbos
     return alignmentScores
 
 
-def validateFullLengthSequences(referenceSequences=None, fullLengthSequences=None, outputDirectory=None, threadCount=1, verbose=False, delimiter='\t'):
+def validateFullLengthSequences(referenceSequences=None, fullLengthSequences=None, outputDirectory=None, threadCount=1
+    , verbose=False, delimiter='\t', keepSuppFiles=False):
     validateFullLengthSequencesUsingBlast(referenceSequences=referenceSequences
         , fullLengthSequences=fullLengthSequences
         , outputDirectory=outputDirectory
         , threadCount=threadCount
         , verbose=verbose
-        , delimiter=delimiter)
+        , delimiter=delimiter
+        ,keepSuppFiles=keepSuppFiles)
 
 
 def cleanupBlastOutputFiles(blastDirectory=None, referenceFileName=None, queryBatches=None):
@@ -90,7 +92,7 @@ def cleanupBlastOutputFiles(blastDirectory=None, referenceFileName=None, queryBa
 
 
 def validateFullLengthSequencesUsingBlast(referenceSequences=None, fullLengthSequences=None, outputDirectory=None
-        , threadCount=1, batchSize=50,  verbose=False, delimiter='\t', keepBlastOutputFiles=False):
+        , threadCount=1, batchSize=50, verbose=False, delimiter='\t', keepSuppFiles=False):
     # TODO: Blast is hopefully faster than pairwise alignments.
     #  But it's only doing local alignments.
     print('Validating ' + str(len(fullLengthSequences)) + ' sequences against ' + str(len(referenceSequences))
@@ -144,7 +146,7 @@ def validateFullLengthSequencesUsingBlast(referenceSequences=None, fullLengthSeq
     pool.join()
 
     # Delete blast output files
-    if(not keepBlastOutputFiles):
+    if(not keepSuppFiles):
         cleanupBlastOutputFiles(blastDirectory=blastDirectory, referenceFileName=referenceFileName, queryBatches=queryBatches)
 
     # Create output file
