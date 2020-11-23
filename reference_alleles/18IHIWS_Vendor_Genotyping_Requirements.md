@@ -1,4 +1,4 @@
-## Vendor requirements for generation of Genotyping Result documents.
+# Vendor requirements for generation of Genotyping Result documents.
 When reporting HLA genotyping for the [18th IWIWS](https://www.ihiw18.org/), it is necessary to be consistent and predictable, to facilitate ease of interpretation and reusability. There are many potential difficulties and ambiguities that may be encountered when creating a genotyping document. The result should be easy to interpret, both by humans and by computers. It is valuable to address these difficulties and find the best approach based on community consensus. This document contains a set of guidelines for vendors on how we recommend to provide genotyping data.
 
 These guidelines are for the community; Your questions, comments, complaints, and suggestions are welcomed and encouraged. Please send them to Ben Matern (B.M.Matern@umcutrecht.nl) or Eric Spierings (E.Spierings@umcutrecht.nl)
@@ -8,7 +8,7 @@ HLA genotyping data should be provided in the [HML 1.0.1 format](schemas.nmdp.or
 
 HML Documents that are uploaded to the [workshop database](https://data.ihiws.org/) are validated according to some sets of standards.
 
-### Standard Validation Requirements
+## Standard Validation Requirements
 As a general rule, HML documents should follow these guidelines for validation:
 
 * Documents must conform to the [HML Schema](http://schemas.nmdp.org/spec/hml/1.0.1/hml-1.0.1.xsd).

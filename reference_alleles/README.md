@@ -1,4 +1,4 @@
-## Reference alleles for the 18th IHIWS
+# Reference alleles for the 18th IHIWS
 This repository contains selected reference sequences for the 18th International HLA and Immunogenetics Workshop. All 18th International HLA and Immunogenetics Workshop database functions used [IPD-IMGT/HLA Database](https://www.ebi.ac.uk/ipd/imgt/hla/) sequence information to facilitate the use of this specific database version in NGS HLA Typing Reports..
 
 These reference sequences were selected using [a set of python scripts](https://github.com/IHIW/bioinformatics/tree/master/reference_alleles/generate_references), which choose the lowest-numbered full-length sequence available in a given IPD-IMGT/HLA release. The [sequences selected for the 17th IHIWS](https://github.com/IHIW/bioinformatics/tree/master/reference_alleles/3.25.0_catalog) were included, for backwards compatibility.
