@@ -4,8 +4,16 @@ def featureNames():
 class AlleleSequence:
     def __init__(self):
         self.alleleName = None
+        self.description = None
         self.featureSequences = {}
         self.accessionNumber = None
+
+    def getLocus(self):
+        try:
+            currentLocus, nomenclatureFields = self.alleleName.split('*')
+            return currentLocus
+        except Exception as e:
+            return None
 
     def isFullLength(self):
         featureNames = ','.join(sorted(list(self.featureSequences.keys())))

@@ -1,9 +1,14 @@
 import argparse
-from os.path import join, isdir
-from os import makedirs
+from os.path import join, isdir, isfile
+from os import makedirs, remove, rmdir
 from datetime import datetime
+from requests import get
+from zipfile import ZipFile
+from random import shuffle
 
 from ParseXml import parseXmlFile, clusterSequences, parsePreviousReferences
+from FindBestReference import validateFullLengthSequences
+
 
 def printSequences(alleleSequences=None, outputFilename=None, verbose=False):
     if(verbose):
@@ -29,7 +34,7 @@ def printSequenceList(alleleSequences=None, databaseVersion=None, outputDirector
     outputFile.write('IMGT/HLA Database ' + str(databaseVersion) + ' Accession Number\tLocus\tIMGT/HLA Database ' + str(databaseVersion) + ' Allele Name\tDescription\n')
 
     #Cluster to sort them
-    alleleClusters=clusterSequences(alleleSequences)
+    alleleClusters=clusterSequences(alleleSequences=alleleSequences, verbose=verbose)
 
     for locus in sorted(alleleClusters.keys()):
         #print('Finding reference for locus ' + str(locus))
@@ -38,27 +43,57 @@ def printSequenceList(alleleSequences=None, databaseVersion=None, outputDirector
                 currentLocus, nomenclatureFields = allele.alleleName.split('*')
                 nomenclatureTokens = nomenclatureFields.split(':')
                 currentGroup = str(nomenclatureTokens[0])
+
+                # TODO: I saved the previous description, from the former set of reference sequences.
+                #  Theres is a slight problem if I keep old references, resulting in 2 refs for same allele group.
+                #  HLA05918	HLA-A	HLA-A*68:01:01:02	A*68 Reference;A*69 Reference
+                #  HLA00126	HLA-A	HLA-A*69:01:01:01	A*69 Reference
+                #  For now I'll just always re-create the description. Although, I am losing
+                #  "IMGT/HLA Database HLA-A Locus Reference" when I do that.
+
+                #if(allele.description is None or len(allele.description) < 1):
+                #    allele.description = currentLocus.replace('HLA-','') + '*' + currentGroup + ' Reference'
+                allele.description = currentLocus.replace('HLA-', '') + '*' + currentGroup + ' Reference'
+
                 outputFile.write(str(allele.accessionNumber) + '\t' + currentLocus
-                    + '\t' + str(allele.alleleName) + '\t' + currentLocus + '*' + currentGroup + ' Reference\n')
+                    + '\t' + str(allele.alleleName) + '\t' + str(allele.description) + '\n')
 
     outputFile.close()
 
+def printMissingSequences(missingSequences=None, databaseVersion=None, outputDirectory=None, fileVersion='1.0', verbose=False):
+    outputFileNameShort = databaseVersion + '_Missing_Reference_Alleles.txt'
+    outputFileNameFull = join(outputDirectory, outputFileNameShort)
+    if(verbose):
+        print('Writing a list of ' + str(len(missingSequences)) + ' missing allele sequences to:' + str(outputFileNameFull))
+    outputFile=open(outputFileNameFull,'w')
 
+    outputFile.write('# filename: ' + str(outputFileNameShort) + '\n')
+    outputFile.write('# date: ' + datetime.today().strftime('%Y-%m-%d') + '\n')
+    outputFile.write('# version: ' + str(fileVersion) + '\n')
+    outputFile.write('# author: ' + str('Ben Matern <B.M.Matern@umcutrecht.nl>') + '\n')
+
+    alleleClusters=clusterSequences(alleleSequences=missingSequences,verbose=verbose)
+
+    for locus in sorted(alleleClusters.keys()):
+        for alleleGroup in sorted(alleleClusters[locus].keys()):
+            for allele in alleleClusters[locus][alleleGroup]:
+                outputFile.write(str(allele.alleleName) + '\n')
+
+    outputFile.close()
 
 def createReferenceSequences(clusteredFullLenAlleleSequences=None, previousReferenceSequences=None, verbose=False):
-    clusteredPreviousReferences = clusterSequences(alleleSequences=previousReferenceSequences)
+    clusteredPreviousReferences = clusterSequences(alleleSequences=previousReferenceSequences,verbose=verbose)
 
     print('Creating Reference Sequences for ' + str(len(clusteredFullLenAlleleSequences.keys()))
           + ' loci, previous reference sequences contained ' + str(len(clusteredPreviousReferences.keys()))
           + ' loci.')
 
     referenceSequences = []
+    missingSequences = []
 
     # Start by looping previous reference sequences
     for locus in sorted(clusteredPreviousReferences.keys()):
-        #print('Finding reference for locus ' + str(locus))
         for alleleGroup in sorted(clusteredPreviousReferences[locus].keys()):
-            #alleleGroupFull = locus + '*' + alleleGroup
             #print('Finding reference for group ' + alleleGroupFull)
             for previousReferenceSequence in clusteredPreviousReferences[locus][alleleGroup]:
                 #print('Finding reference for allele ' + previousReferenceSequence.alleleName)
@@ -68,14 +103,19 @@ def createReferenceSequences(clusteredFullLenAlleleSequences=None, previousRefer
                     for fullLenSequence in clusteredFullLenAlleleSequences[locus][alleleGroup]:
                         if(previousReferenceSequence.alleleName in fullLenSequence.alleleName):
                             #print('Match:' + previousReferenceSequence.alleleName + '/' + fullLenSequence.alleleName)
+
+                            fullLenSequence.description = previousReferenceSequence.description
                             referenceSequences.append(fullLenSequence)
                             matchFound = True
                             break
                 except Exception as e:
                     matchFound=False
 
-                if(not matchFound and verbose):
-                    print('Warning, Could not find a matching full-length sequence for allele ' + str(previousReferenceSequence.alleleName))
+                if(not matchFound):
+                    missingSequences.append(previousReferenceSequence)
+                    if verbose:
+                        print('Warning, Could not find a matching full-length sequence for allele ' + str(previousReferenceSequence.alleleName))
+
 
 
     # Loop full-length sequences from current IPD-IMGT/HLA XML.
@@ -107,43 +147,99 @@ def createReferenceSequences(clusteredFullLenAlleleSequences=None, previousRefer
                         print('adding sequence ' + clusteredFullLenAlleleSequences[locus][alleleGroup][0].alleleName
                             + ' as a reference for group ' + str(alleleGroupFull))
 
-    return referenceSequences
+    return referenceSequences, missingSequences
+
+
+def downloadImgtXml(outputDirectory=None, release=None, verbose=False):
+    print('Downloading IPD-IMGT/HLA xml file for release ' + str(release))
+
+    zipLocalFileName = join(outputDirectory, 'hla.xml.zip')
+    xmlLocalFileName = join(outputDirectory, 'hla.xml')
+    zipRemoteFileName = 'https://raw.githubusercontent.com/ANHIG/IMGTHLA/' + release.replace('.','') + '/xml/hla.xml.zip'
+
+    # This is a hack. Because the 3.35.0 release was uploaded to github using lfs, the normal url doesn't work.
+    # Todo: check for this, somehow, and respond in a smart way.
+    if(release=='3.35.0'):
+        zipRemoteFileName = 'https://github.com/ANHIG/IMGTHLA/raw/3350/xml/hla.xml.zip'
+
+    if(verbose):
+        print('Local xml filename:' + str(xmlLocalFileName))
+        print('Remote zip filename:' + str(zipRemoteFileName))
+
+    requestData = get(zipRemoteFileName, allow_redirects=True)
+    open(zipLocalFileName, 'wb').write(requestData.content)
+
+    with ZipFile(zipLocalFileName, 'r') as zipObj:
+        zipObj.extract('hla.xml', path=outputDirectory)
+
+    if(isfile(xmlLocalFileName)):
+        return xmlLocalFileName
+    else:
+        raise Exception('Problem when downloading and unzipping IMGT XML:' + str(zipRemoteFileName))
+
+
+def cleanupSupplementalFiles(keepSuppFiles=False, supplementalFileDirectory=None):
+    if(not keepSuppFiles):
+        # delete the zip file and the xml file.
+        zipFileName = join(supplementalFileDirectory, 'hla.xml.zip')
+        xmlFileName = join(supplementalFileDirectory, 'hla.xml')
+        remove(zipFileName)
+        remove(xmlFileName)
+        rmdir(supplementalFileDirectory)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-v", "--verbose", help="verbose operation", action="store_true")
-    parser.add_argument("-x", "--xml", required=True, help="path to IPD-IMGT/HLA xml file", type=str)
+    parser.add_argument("-s", "--supplementary", help="keep supplementary files", action="store_true", default=False)
+    parser.add_argument("-V", "--validate", help="validate full-length sequences by aligning against References", action="store_true")
+    parser.add_argument("-r", "--release", required=True, help="IPD-IMGT/HLA release version", type=str)
     parser.add_argument("-o", "--output", required=True, help="Output Directory", type=str)
     parser.add_argument("-a", "--allelelist", required=False, help="Previous Allele List", type=str)
+    parser.add_argument("-t", "--threads", required=False, help="Processor Threads", type=int)
 
     args = parser.parse_args()
     verbose = args.verbose
+    if(args.threads is not None):
+        threadCount = args.threads
+    else:
+        threadCount = 1
 
     outputDirectory = args.output
+    supplementalFileDirectory = join(outputDirectory,'supplemental_files')
+
     if not isdir(outputDirectory):
         makedirs(outputDirectory)
+    if not isdir(supplementalFileDirectory):
+        makedirs(supplementalFileDirectory)
 
     print('Generating Reference Sequences')
 
     if verbose:
         print("Running in verbose mode.")
 
-    # TODO: Get the database version from the xml file
-    alleleSequences=parseXmlFile(xmlFile=args.xml,fullLengthOnly=True, verbose=verbose)
-    databaseVersion='3.42.0'
-    printSequences(alleleSequences=alleleSequences, outputFilename=join(outputDirectory,'FullLengthSequences.fasta'), verbose=verbose)
-    alleleSequenceClusters=clusterSequences(alleleSequences=alleleSequences)
-    # TODO: Get Description from Previous reference lists.
+    xmlFileLocation = downloadImgtXml(outputDirectory=supplementalFileDirectory, release=args.release, verbose=verbose)
+    alleleSequences, databaseVersion = parseXmlFile(xmlFile=xmlFileLocation,fullLengthOnly=True, verbose=verbose)
+    # TODO: The database version from the XML file may be slightly different than the provided release number, due to minor versioning.
+    #  I am naming files based on the "0" version but there might be 3.42.1 for example.
+    #  Not completely accurate but its more consistent this way. May cause confusion.
+    if(databaseVersion != args.release):
+        print('Warning! the latest IMGT/HLA xml file shows a different (newer?) release date ('
+              + str(databaseVersion) + ') than the provided release version (' + str(args.release) + ')')
+    if(args.supplementary):
+        printSequences(alleleSequences=alleleSequences, outputFilename=join(supplementalFileDirectory,str(args.release) + '_FullLengthSequences.fasta'), verbose=verbose)
+    alleleSequenceClusters=clusterSequences(alleleSequences=alleleSequences,verbose=verbose)
     previousReferenceSequences = parsePreviousReferences(referenceSequenceFileName=args.allelelist, verbose=verbose)
-    newReferenceSequences = createReferenceSequences(clusteredFullLenAlleleSequences=alleleSequenceClusters, previousReferenceSequences=previousReferenceSequences, verbose=verbose)
-    printSequences(alleleSequences=newReferenceSequences, outputFilename=join(outputDirectory, 'ReferenceSequences.fasta'), verbose=verbose)
-    printSequenceList(alleleSequences=newReferenceSequences, databaseVersion=databaseVersion, outputDirectory=outputDirectory, verbose=verbose)
-
-    # TODO: Align Reference Sequences
-        # For each reference sequence
-            # Find corresponding full-length sequences
-            # Align them.
-
+    newReferenceSequences, missingSequences = createReferenceSequences(clusteredFullLenAlleleSequences=alleleSequenceClusters, previousReferenceSequences=previousReferenceSequences, verbose=verbose)
+    printSequences(alleleSequences=newReferenceSequences, outputFilename=join(outputDirectory, str(args.release) + '_ReferenceSequences.fasta'), verbose=verbose)
+    printSequenceList(alleleSequences=newReferenceSequences, databaseVersion=args.release, outputDirectory=outputDirectory, verbose=verbose)
+    if (args.supplementary):
+        printMissingSequences(missingSequences=missingSequences, databaseVersion=args.release, outputDirectory=supplementalFileDirectory, verbose=verbose)
+    if(args.validate):
+        validationSet = alleleSequences
+        validateFullLengthSequences(referenceSequences=newReferenceSequences, fullLengthSequences=validationSet
+            , outputDirectory=outputDirectory, verbose=verbose, threadCount=threadCount, keepSuppFiles=args.supplementary)
+    cleanupSupplementalFiles(keepSuppFiles=args.supplementary, supplementalFileDirectory=supplementalFileDirectory)
     print('Done. Reference Sequences were written to ' + str(outputDirectory))
 
