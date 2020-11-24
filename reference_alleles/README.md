@@ -15,5 +15,5 @@ For each release tarting with 3.26.0, this catalog is available in this reposito
 - [A fasta containing the reference sequences](https://github.com/IHIW/bioinformatics/blob/master/reference_alleles/3.42.0_catalog/3.42.0_Reference_Alleles.txt)
 
 ## Reference Sequences and HML documents for the 18th IHIWS
-More guidelines, including database versions and sequences reference sequences in HML documentscan be found in the file in [18IHIWS_Vendor_Genotyping_Requirements](https://github.com/IHIW/bioinformatics/blob/18WorkshopUpdates/reference_alleles/18IHIWS_Vendor_Genotyping_Requirements.md)
+More guidelines, including database versions and sequences reference sequences in HML documents can be found in the file in [18IHIWS_Vendor_Genotyping_Requirements](https://github.com/IHIW/bioinformatics/blob/master/reference_alleles/18IHIWS_Vendor_Genotyping_Requirements.md)
 
