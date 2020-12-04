@@ -19,10 +19,11 @@
 #     This CSV shows A mapping of this release's full-length sequences to their closest chosen references
 #   --supplemental
 #     Keep all supplemental files. Including:
-#       BLAST alignment XMLS
 #       IMGT/HLA zip and XML files.
 #       A fasta containing the full-length allele sequences from this release
 #       X.XX.X_Missing_Reference_Alleles.txt (Alleles from the previous reference sequence that were not found in this release)
+#   --blast
+#     Keep all BLAST alignment XMLS
 #     Warning, this generates several gigabytes of output data):
 #   --verbose
 #     more output text
@@ -42,9 +43,10 @@ source ../../venv/bin/activate
 # Iterate a list of IPD-IMGT/HLA releases, separated by spaces. Or just chose a single release.
 releases="3.42.0 3.41.0 3.40.0 3.39.0 3.38.0 3.37.0 3.36.0 3.35.0 3.34.0 3.33.0 3.32.0 3.31.0 3.30.0 3.29.0 3.28.0 3.27.0 3.26.0"
 #releases="3.35.0"
+version="1.1"
 for release in $releases; do
     echo $release
-    python GenerateReferences.py --allelelist=$PrevRefSeqs --release=$release --output="../../reference_alleles/"$release"_catalog"
+    python GenerateReferences.py --allelelist=$PrevRefSeqs --release=$release --output="../../reference_alleles/"$release"_catalog" --version=$version --supplementary
 done
 
 # Deactivating my virtual environment

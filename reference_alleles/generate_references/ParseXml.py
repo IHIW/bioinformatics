@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ElementTree
 from os.path import isfile
+import operator
 
 from AlleleSequence import AlleleSequence
 
@@ -8,6 +9,7 @@ def parseXmlFile(xmlFile=None, fullLengthOnly=True, verbose=False):
     print('Parsing this IPD-IMGT/HLA input file:' + str(xmlFile))
     databaseVersion = None
 
+    # TODO: There is a CWD status in the XML document. Parse that out and store it. Export it on my ref sequence data thingy.
 
     if(xmlFile is None or not isfile(xmlFile)):
         raise Exception ('Specify the input IPD-IMGT/HLA input file:' + str(xmlFile))
@@ -29,6 +31,13 @@ def parseXmlFile(xmlFile=None, fullLengthOnly=True, verbose=False):
         # Every allele has one, I think.
         if(len(releaseList) != 1 or currentReleaseVersion is None or len(currentReleaseVersion) < 1):
             raise Exception('Allele ' + str(currentAllele.alleleName) + ' does not have exactly one releaseversions node.')
+
+        # Find the CWD status
+        cwdList = alleleNode.findall('{http://hla.alleles.org/xml}cwd_catalogue')
+        if(len(cwdList) == 1):
+            currentAllele.cwdStatus = cwdList[0].get('cwd_status') #+ ':v' + cwdList[0].get('cwd_version')
+        else:
+            currentAllele.cwdStatus = 'Unknown'
 
         if(databaseVersion is None):
             databaseVersion = currentReleaseVersion
@@ -112,6 +121,9 @@ def clusterSequences(alleleSequences=None, verbose=False):
             clusteredSequences[currentLocus][currentGroup] = []
 
         clusteredSequences[currentLocus][currentGroup].append(alleleSequence)
+
+        # Sort this group by allele name. This is probably inefficient.
+        clusteredSequences[currentLocus][currentGroup] = sorted(clusteredSequences[currentLocus][currentGroup], key=operator.attrgetter("alleleName"))
 
     return clusteredSequences
 
