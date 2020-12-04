@@ -245,17 +245,26 @@ def getLocusReferences():
     return locusReferences
 
 def getExcludeSequenceList(imgtReleaseVersion=None):
+    excludeSequenceList = []
     # These are hard-coded alleles that are excluded from the reference lists.
-    if(imgtReleaseVersion in ['3.25.0','3.26.0']):
-        excludeSequenceList = []
-    else:
-        # Starting in release 3.27.0 there is a full length HLA-B*41:01:01 reference, and DPB1*01 reference. so this sequence is no longer needed.
-        # So, B*40:306 and DPB1*02:01:01 are not needed.
-        excludeSequenceList = [
-            'HLA-B*40:305'
-            , 'HLA-DPB1*02:01:02'
-        ]
-    return excludeSequenceList
+
+    # Starting in release 3.26.0 there is a full length HLA-B*41:01:01 reference,
+    # So, B*40:305 is not needed.
+    if(imgtReleaseVersion not in ['3.25.0']):
+        excludeSequenceList.append('HLA-B*40:305')
+
+    # Starting in release 3.27.0 there is a full length DPB1*01 reference
+    # So, DPB1*02:01:01 are not needed.
+    if(imgtReleaseVersion not in ['3.25.0','3.26.0']):
+        excludeSequenceList.append('HLA-DPB1*02:01:02')
+
+    # Starting in release 3.29.0, there is a full-length DPA1:01:03:01:01, used as standard locus reference.
+    # Stop using DPA1:01:03:01:02
+    if (imgtReleaseVersion not in ['3.25.0', '3.26.0', '3.27.0', '3.28.0']):
+        excludeSequenceList.append('HLA-DPA1*01:03:01:02')
+
+
+    return list(set(excludeSequenceList))
 
 def printSequenceDetails(alleleSequences=None, outputFilename=None, verbose=False, delimiter='\t', imgtReleaseVersion=None):
     if(verbose):
