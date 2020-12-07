@@ -7,6 +7,7 @@ class AlleleSequence:
         self.description = None
         self.featureSequences = {}
         self.accessionNumber = None
+        self.cwdStatus = None
 
     def getLocus(self):
         try:
