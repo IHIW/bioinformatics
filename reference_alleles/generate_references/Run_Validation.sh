@@ -1,10 +1,11 @@
-# filename: Run_GenerateReferences.sh
+# filename: Run_Validation.sh
 # date: 2020-11-17
 # version: 1.0
 # author: Ben Matern <B.M.Matern@umcutrecht.nl>
 
 # description:
 # 	This Script runs the Reference Sequence Generator. This chooses valid reference sequences to be used in HML documents for the 18th Workshop.
+#   The --validate flag is set in order to chose the best matching reference for each full-length sequence.
 
 #	Inputs: 
 #		an IPD-IMGT/HLA release version.
