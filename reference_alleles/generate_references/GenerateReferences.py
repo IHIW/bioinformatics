@@ -331,14 +331,10 @@ if __name__ == '__main__':
     parser.add_argument("-r", "--release", required=True, help="IPD-IMGT/HLA release version", type=str)
     parser.add_argument("-o", "--output", required=True, help="Output Directory", type=str)
     parser.add_argument("-a", "--allelelist", required=False, help="Previous Allele List", type=str)
-    parser.add_argument("-t", "--threads", required=False, help="Processor Threads", type=int)
+    parser.add_argument("-t", "--threads", required=False, help="Processor Threads", type=int, default=1)
 
     args = parser.parse_args()
     verbose = args.verbose
-    if(args.threads is not None):
-        threadCount = args.threads
-    else:
-        threadCount = 1
 
     outputDirectory = args.output
     supplementalFileDirectory = join(outputDirectory,'supplemental_files')
@@ -377,7 +373,7 @@ if __name__ == '__main__':
     if(args.validate):
         validationSet = alleleSequences
         validateFullLengthSequences(referenceSequences=newReferenceSequences, fullLengthSequences=validationSet
-            , outputDirectory=outputDirectory, verbose=verbose, threadCount=threadCount, keepBlastFiles=args.blast)
+            , outputDirectory=outputDirectory, verbose=verbose, threadCount=args.threads, keepBlastFiles=args.blast)
     cleanupSupplementalFiles(keepSuppFiles=args.supplementary, supplementalFileDirectory=supplementalFileDirectory)
     print('Done. Reference Sequences were written to ' + str(outputDirectory))
 
