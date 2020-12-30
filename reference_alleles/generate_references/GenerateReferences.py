@@ -88,47 +88,26 @@ def printMissingSequences(missingSequences=None, databaseVersion=None, outputDir
 
     outputFile.close()
 
-def createReferenceSequences(clusteredFullLenAlleleSequences=None, previousReferenceSequences=None, verbose=False, imgtReleaseVersion=None):
-    clusteredPreviousReferences = clusterSequences(alleleSequences=previousReferenceSequences,verbose=verbose)
-
+def createReferenceSequences(clusteredFullLenAlleleSequences=None, verbose=False, imgtReleaseVersion=None):
     print('Creating Reference Sequences for ' + str(len(clusteredFullLenAlleleSequences.keys()))
-          + ' loci, previous reference sequences contained ' + str(len(clusteredPreviousReferences.keys()))
           + ' loci.')
 
     referenceSequences = []
     missingSequences = []
-    excludeSequenceList = getExcludeSequenceList(imgtReleaseVersion=imgtReleaseVersion)
     locusReferences=getLocusReferences()
 
-    # Start by looping previous reference sequences
-    for locus in sorted(clusteredPreviousReferences.keys()):
-        for alleleGroup in sorted(clusteredPreviousReferences[locus].keys()):
-            #print('Finding reference for group ' + alleleGroupFull)
-            for previousReferenceSequence in clusteredPreviousReferences[locus][alleleGroup]:
-                #print('Finding reference for allele ' + previousReferenceSequence.alleleName)
+    # Add hard-coded alleles
+    includeSequences, alleleDescriptionLookup = getIncludeSequenceList(imgtReleaseVersion=imgtReleaseVersion)
+    for locus in sorted(clusteredFullLenAlleleSequences.keys()):
+        for alleleGroup in sorted(clusteredFullLenAlleleSequences[locus].keys()):
+            # print('Finding reference for group ' + alleleGroupFull)
+            for fullLengthSequence in clusteredFullLenAlleleSequences[locus][alleleGroup]:
+                # print('Finding reference for allele ' + previousReferenceSequence.alleleName)
                 # Skip the sequence if it's in the excludeSequenceList
-                if(previousReferenceSequence.alleleName not in excludeSequenceList):
-                    # Is there a full-length seq available? Look in the newest list.
-                    try:
-                        matchFound = False
-                        for fullLenSequence in clusteredFullLenAlleleSequences[locus][alleleGroup]:
-                            if(previousReferenceSequence.alleleName in fullLenSequence.alleleName):
-                                #print('Match:' + previousReferenceSequence.alleleName + '/' + fullLenSequence.alleleName)
-
-                                fullLenSequence.description = previousReferenceSequence.description
-                                referenceSequences.append(fullLenSequence)
-                                matchFound = True
-                                break
-                    except Exception as e:
-                        matchFound=False
-
-                    if(not matchFound):
-                        missingSequences.append(previousReferenceSequence)
-                        if verbose:
-                            print('Warning, Could not find a matching full-length sequence for allele ' + str(previousReferenceSequence.alleleName))
-                else:
+                if (fullLengthSequence.alleleName in (includeSequences)):
+                    referenceSequences.append(fullLengthSequence)
                     if verbose:
-                        print('This allele is in the excludeSequenceList:' + str(previousReferenceSequence.alleleName))
+                        print('Forced adding hard-coded reference:' + str(fullLengthSequence.alleleName))
 
     # Add locus references if they don't already exist
     for locus in sorted(clusteredFullLenAlleleSequences.keys()):
@@ -169,14 +148,10 @@ def createReferenceSequences(clusteredFullLenAlleleSequences=None, previousRefer
                     if(verbose):
                         print('Not adding a reference sequence for allele group ' + alleleGroupFull)
                 else:
-                    if(clusteredFullLenAlleleSequences[locus][alleleGroup][0].alleleName in excludeSequenceList):
-                        # TODO: Should handle this better. Figure it out when a reject sequence is selected for some reason.
-                        raise Exception ('Cannot add this sequence because it is in the reject sequence list:' + str(clusteredFullLenAlleleSequences[locus][alleleGroup][0].alleleName))
-                    else:
-                        referenceSequences.append(clusteredFullLenAlleleSequences[locus][alleleGroup][0])
-                        if(verbose):
-                            print('adding sequence ' + clusteredFullLenAlleleSequences[locus][alleleGroup][0].alleleName
-                                + ' as a reference for group ' + str(alleleGroupFull))
+                    referenceSequences.append(clusteredFullLenAlleleSequences[locus][alleleGroup][0])
+                    if(verbose):
+                        print('adding sequence ' + clusteredFullLenAlleleSequences[locus][alleleGroup][0].alleleName
+                            + ' as a reference for group ' + str(alleleGroupFull))
 
     return referenceSequences, missingSequences
 
@@ -244,8 +219,48 @@ def getLocusReferences():
     ]
     return locusReferences
 
+def getIncludeSequenceList(imgtReleaseVersion=None):
+    # These are hard-coded alleles that are included in the reference lists.
+    # Try to only use full allele names here.
+    includeSequences = []
+    alleleDescriptionLookup = {}
+
+    # Kazu suggests to use  B*15:10:01:01 as a B71 reference, it differs greatly in exon 2 and this is useful.
+    # SHould still include B*15:01 if possible.
+    includeSequences.append('HLA-B*15:10:01:01')
+    includeSequences.append('HLA-B*15:01:01:01')
+    alleleDescriptionLookup['HLA-B*15:10:01:01'] = 'B71 Serotype Reference'
+
+    # Kazu's suggestion, indeed this sequence has longest UTRs.
+    includeSequences.append('HLA-B*27:05:02:01')
+
+    # 08:01 and 08:03(from 17th IHIW) have shorter UTRs. Use 08:02.
+    includeSequences.append('HLA-DRB1*08:02:01:01')
+
+    # Kazu's suggestion, Historical Reference. Full-length appears in version 3.29.0. Otherwise use the 17th ref.
+    if (imgtReleaseVersion in ['3.25.0', '3.26.0','3.27.0', '3.28.0']):
+        includeSequences.append('HLA-DRB1*14:05:01')
+    else:
+        includeSequences.append('HLA-DRB1*14:54:01:01')
+
+    # Kazu's suggestion, 03:03 and 03:04 have longer UTRs than 03:02(17th IHIW) or 03:01(not full length)
+    includeSequences.append('HLA-C*03:03:01:01')
+
+    # In 3.25 and 3.26 we didn't have a good full-length A*74:01 reference. Using this one for continuity and clarity.
+    if(imgtReleaseVersion in ['3.25.0','3.26.0']):
+        includeSequences.append('HLA-A*74:02:01:02')
+
+    # # Starting in release 3.27.0 there is a full length DPB1*01 reference. Before that we use DPB1*02:01:02 for continuity
+    if(imgtReleaseVersion in ['3.25.0','3.26.0']):
+        includeSequences.append('HLA-DPB1*02:01:02')
+
+    return sorted(list(set(includeSequences))), alleleDescriptionLookup
+
+# TODO: Since we're no longer reading the 17th ws list, this isn't necessary. This is only alleles excluded from 17th list.
+'''
 def getExcludeSequenceList(imgtReleaseVersion=None):
     excludeSequenceList = []
+
     # These are hard-coded alleles that are excluded from the reference lists.
 
     # Starting in release 3.26.0 there is a full length HLA-B*41:01:01 reference,
@@ -265,6 +280,7 @@ def getExcludeSequenceList(imgtReleaseVersion=None):
 
 
     return list(set(excludeSequenceList))
+'''
 
 def printSequenceDetails(alleleSequences=None, outputFilename=None, verbose=False, delimiter='\t', imgtReleaseVersion=None):
     if(verbose):
@@ -330,7 +346,6 @@ if __name__ == '__main__':
     parser.add_argument("-V", "--validate", help="validate full-length sequences by aligning against References", action="store_true")
     parser.add_argument("-r", "--release", required=True, help="IPD-IMGT/HLA release version", type=str)
     parser.add_argument("-o", "--output", required=True, help="Output Directory", type=str)
-    parser.add_argument("-a", "--allelelist", required=False, help="Previous Allele List", type=str)
     parser.add_argument("-t", "--threads", required=False, help="Processor Threads", type=int, default=1)
 
     args = parser.parse_args()
@@ -360,8 +375,7 @@ if __name__ == '__main__':
     if(args.supplementary):
         printSequences(alleleSequences=alleleSequences, outputFilename=join(supplementalFileDirectory,str(args.release) + '_FullLengthSequences.fasta'), verbose=verbose)
     alleleSequenceClusters=clusterSequences(alleleSequences=alleleSequences,verbose=verbose)
-    previousReferenceSequences = parsePreviousReferences(referenceSequenceFileName=args.allelelist, verbose=verbose)
-    newReferenceSequences, missingSequences = createReferenceSequences(clusteredFullLenAlleleSequences=alleleSequenceClusters, previousReferenceSequences=previousReferenceSequences, verbose=verbose, imgtReleaseVersion=args.release)
+    newReferenceSequences, missingSequences = createReferenceSequences(clusteredFullLenAlleleSequences=alleleSequenceClusters, verbose=verbose, imgtReleaseVersion=args.release)
     printSequences(alleleSequences=newReferenceSequences, outputFilename=join(outputDirectory, str(args.release) + '_ReferenceSequences.fasta'), verbose=verbose)
     printSequenceList(alleleSequences=newReferenceSequences, databaseVersion=args.release, outputDirectory=outputDirectory, verbose=verbose, fileVersion=args.version)
     if (args.supplementary):

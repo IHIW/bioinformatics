@@ -103,6 +103,10 @@ def parseXmlFile(xmlFile=None, fullLengthOnly=True, verbose=False):
     return alleleSequences, databaseVersion
 
 def clusterSequences(alleleSequences=None, verbose=False):
+    if(alleleSequences is None):
+        print('Cannot cluster "None" sequences, returning None.')
+        return None
+
     if(verbose):
         print('Clustering ' + str(len(alleleSequences)) + ' Allele Sequences by Locus and Group.')
     # Create Dictionary clusteredSequences[locus][group]
