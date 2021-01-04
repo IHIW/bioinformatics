@@ -1,5 +1,5 @@
 # filename: 3.28.0_Reference_Alleles.txt
-# date: 2020-12-30
+# date: 2021-01-04
 # version: 1.2
 # author: Ben Matern <B.M.Matern@umcutrecht.nl>
 IMGT/HLA Database 3.28.0 Accession Number	Locus	IMGT/HLA Database 3.28.0 Allele Name	Description
@@ -100,7 +100,7 @@ HLA00751	HLA-DRB1	HLA-DRB1*11:01:01:01	DRB1*11 Reference
 HLA14829	HLA-DRB1	HLA-DRB1*12:01:01:02	DRB1*12 Reference
 HLA00797	HLA-DRB1	HLA-DRB1*13:01:01:01	DRB1*13 Reference
 HLA00837	HLA-DRB1	HLA-DRB1*14:05:01	DRB1*14 Reference
-HLA00865	HLA-DRB1	HLA-DRB1*15:01:01:01	DRB1*15 Reference
+HLA03453	HLA-DRB1	HLA-DRB1*15:01:01:02	DRB1*15 Reference
 HLA00876	HLA-DRB1	HLA-DRB1*16:01:01	DRB1*16 Reference
 HLA00887	HLA-DRB3	HLA-DRB3*01:01:02:01	HLA-DRB3 Locus Reference;DRB3*01 Reference
 HLA00895	HLA-DRB3	HLA-DRB3*02:02:01:01	DRB3*02 Reference

@@ -225,6 +225,9 @@ def getIncludeSequenceList(imgtReleaseVersion=None):
     includeSequences = []
     alleleDescriptionLookup = {}
 
+    # DRB1*15:01:01:02 has longer UTRs. Better to keep for continuity.
+    includeSequences.append('HLA-DRB1*15:01:01:02')
+
     # Kazu suggests to use  B*15:10:01:01 as a B71 reference, it differs greatly in exon 2 and this is useful.
     # SHould still include B*15:01 if possible.
     includeSequences.append('HLA-B*15:10:01:01')
