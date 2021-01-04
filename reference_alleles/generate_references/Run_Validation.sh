@@ -9,7 +9,6 @@
 
 #	Inputs: 
 #		an IPD-IMGT/HLA release version.
-#		17IHIWS_Reference_Alleles.txt (Previous Reference Sequences , for backwards compatibility)
 #	Outputs:
 #		X.XX.X_Reference_Alleles.txt (A list of reference alleles)
 #		X.XX.X_Reference_Sequences.fasta (The actual reference sequences)
@@ -36,8 +35,6 @@
 #   requests
 #   zipfile
 
-PrevRefSeqs="../../reference_alleles/3.25.0_catalog/17IHIWS_Reference_Alleles.txt"
-
 # My biopython etc. packages are installed in a virtual environment. Change or delete this if your venv is different.
 source ../../venv/bin/activate
 
@@ -47,7 +44,7 @@ releases="3.42.0"
 version="1.2"
 for release in $releases; do
     echo $release
-    python GenerateReferences.py --allelelist=$PrevRefSeqs --release=$release --output="../../reference_alleles/"$release"_catalog" --version=$version --supplementary --validate --threads=4
+    python GenerateReferences.py --release=$release --output="../../reference_alleles/"$release"_catalog" --version=$version --supplementary --validate --threads=5
 done
 
 # Deactivating my virtual environment
