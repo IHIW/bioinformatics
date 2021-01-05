@@ -306,10 +306,21 @@ def printSequenceDetails(alleleSequences=None, outputFilename=None, verbose=Fals
         for alleleGroup in sorted(alleleClusters[locus].keys()):
             for alleleSequence in alleleClusters[locus][alleleGroup]:
                 # TODO: This will break if the feature is missing. Only running on full-len for now.
+                # Placeholder fix for missing 5 and 3 UTRs.
+                if('5UTR' not in alleleSequence.featureSequences.keys()):
+                    utr5Sequence = ''
+                else:
+                    utr5Sequence = alleleSequence.featureSequences['5UTR']
+
+                if('3UTR' not in alleleSequence.featureSequences.keys()):
+                    utr3Sequence = ''
+                else:
+                    utr3Sequence = alleleSequence.featureSequences['3UTR']
+
                 outputFile.write(alleleSequence.alleleName + delimiter
                     + str(len(alleleSequence.getSequence())) + delimiter
-                    + str(len(alleleSequence.featureSequences['5UTR'])) + delimiter
-                    + str(len(alleleSequence.featureSequences['3UTR'])) + delimiter
+                    + str(len(utr5Sequence)) + delimiter
+                    + str(len(utr3Sequence)) + delimiter
                     + str(alleleSequence.cwdStatus) + '\n')
 
     outputFile.close()
@@ -370,6 +381,7 @@ if __name__ == '__main__':
 
     xmlFileLocation = downloadImgtXml(outputDirectory=supplementalFileDirectory, release=args.release, verbose=verbose)
     alleleSequences, databaseVersion = parseXmlFile(xmlFile=xmlFileLocation,fullLengthOnly=True, verbose=verbose)
+
     # TODO: The database version from the XML file may be slightly different than the provided release number, due to minor versioning.
     #  I am naming files based on the "0" version but there might be 3.42.1 for example.
     #  Not completely accurate but its more consistent this way. May cause confusion.
@@ -387,6 +399,12 @@ if __name__ == '__main__':
         printSequenceDetails(alleleSequences=newReferenceSequences, outputFilename=join(supplementalFileDirectory, 'ReferenceSequenceDetails.csv'), verbose=verbose, imgtReleaseVersion=args.release)
         printSequenceCountsPerLocus(alleleSequences=alleleSequences, outputFilename=join(supplementalFileDirectory, 'FullLengthSequenceCountsPerLocus.csv'), verbose=verbose, imgtReleaseVersion=args.release)
         printSequenceCountsPerLocus(alleleSequences=newReferenceSequences, outputFilename=join(supplementalFileDirectory, 'ReferenceSequenceCountsPerLocus.csv'), verbose=verbose, imgtReleaseVersion=args.release)
+
+        # Parse for all alleles, and print some info on this.
+        allAlleleSequences, databaseVersion = parseXmlFile(xmlFile=xmlFileLocation, fullLengthOnly=False, verbose=verbose)
+        printSequenceDetails(alleleSequences=allAlleleSequences, outputFilename=join(supplementalFileDirectory, 'AllSequencesDetails.csv'), verbose=verbose, imgtReleaseVersion=args.release)
+        printSequenceCountsPerLocus(alleleSequences=allAlleleSequences, outputFilename=join(supplementalFileDirectory, 'AllSequencesCountsPerLocus.csv'), verbose=verbose, imgtReleaseVersion=args.release)
+
         printMissingSequences(missingSequences=missingSequences, databaseVersion=args.release, outputDirectory=supplementalFileDirectory, verbose=verbose)
     if(args.validate):
         validationSet = alleleSequences
