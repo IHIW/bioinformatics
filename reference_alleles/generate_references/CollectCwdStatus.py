@@ -122,11 +122,13 @@ def getCwd3Status(alleleName=None, cwd3Lookup=None):
                 # This one is blank, no status found "yet"
                 pass
             else:
-                cwdStatus = cwd3Lookup[alleleName]
+                # Only if it wasn't already assigned
+                if(cwdStatus == ''):
+                    cwdStatus = cwd3Lookup[alleleName]
         # Check 3 field and 2 field
 
     if (cwdStatus.strip() == ''):
-        return 'Not CWD defined'
+        return 'Not CIWD defined'
     else:
         return cwdStatus
 
@@ -187,7 +189,7 @@ def writeOutputFile(outputFileName=None, alleleNames=None, cwd1Lookup=None
         outputFile.write('Allele Name'
             + delimiter + '"CWD 1.0\nhttps://doi.org/10.1016/j.humimm.2007.01.014\nLoci:HLA-A,-B,-C,-DRB1,-DRB3,-DRB4,-DRB5,-DQA1,-DQB1,-DPB1"'
             + delimiter + '"CWD 2.0\nhttps://doi.org/10.1111/tan.12093\nLoci:HLA-A,-B,-C,-DRB1,-DRB3,-DRB4,-DRB5,-DQA1,-DQB1,-DPA1,-DPB1"'
-            + delimiter + '"CWD 3.0\nhttps://doi.org/10.1111/tan.13811\nLoci:HLA-A,-B,-C,-DRB1,-DRB3,-DRB4,-DRB5,-DQB1,-DPB1"'
+            + delimiter + '"CIWD 3.0\nhttps://doi.org/10.1111/tan.13811\nLoci:HLA-A,-B,-C,-DRB1,-DRB3,-DRB4,-DRB5,-DQB1,-DPB1"'
             + delimiter + '"CWD European (EFI)\nhttps://doi.org/10.1111/tan.12956\nLoci:HLA-A,-B,-C,-DRB1,-DQA1,-DQB1,-DPB1"'
             + delimiter + '"CWD German Stem Cell Donors\nhttps://doi.org/10.1111/tan.13378\nLoci:HLA-A,-B,-C,-DRB1,-DQB1,-DPB1"'
             + delimiter + '"CWD China\nhttps://doi.org/10.1111/tan.13358\nLoci:HLA-A,-B,-C,-DRB1,-DQB1"'
