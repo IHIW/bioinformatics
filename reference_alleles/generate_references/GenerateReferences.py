@@ -24,7 +24,7 @@ def printSequences(alleleSequences=None, outputFilename=None, verbose=False):
                 outputFile.write(str(alleleSequence.getSequence()) + '\n')
     outputFile.close()
 
-def printSequenceList(alleleSequences=None, databaseVersion=None, outputDirectory=None, fileVersion='1.0', verbose=False):
+def printSequenceList(alleleSequences=None, databaseVersion=None, outputDirectory=None, fileVersion='1.0', verbose=False, alleleDescriptionLookup=None):
     outputFileNameShort = databaseVersion + '_Reference_Alleles.txt'
     outputFileNameFull = join(outputDirectory, outputFileNameShort)
     if(verbose):
@@ -53,14 +53,14 @@ def printSequenceList(alleleSequences=None, databaseVersion=None, outputDirector
                 allele.description = ''
                 # Is it a locus reference?
                 for locusReference in list(set(locusReferences)):
-                    if(allele.alleleName in locusReference or locusReference in allele.alleleName):
+                    if (allele.alleleName in locusReference or locusReference in allele.alleleName):
                         allele.description = currentLocus + ' Locus Reference;'
-
-                #if(allele.description is None or len(allele.description) < 1):
-                #    allele.description = currentLocus.replace('HLA-','') + '*' + currentGroup + ' Reference'
-                allele.description += currentLocus.replace('HLA-', '') + '*' + currentGroup + ' Reference'
-
-
+                # If we already have a description (serotype or DP references)
+                if allele.alleleName in alleleDescriptionLookup.keys():
+                    allele.description += alleleDescriptionLookup[allele.alleleName]
+                else:
+                # Otherwise it's a group reference.
+                    allele.description += currentLocus.replace('HLA-', '') + '*' + currentGroup + ' Reference'
 
                 outputFile.write(str(allele.accessionNumber) + '\t' + currentLocus
                     + '\t' + str(allele.alleleName) + '\t' + str(allele.description) + '\n')
@@ -95,6 +95,7 @@ def createReferenceSequences(clusteredFullLenAlleleSequences=None, verbose=False
     referenceSequences = []
     missingSequences = []
     locusReferences=getLocusReferences()
+    alleleDescriptionLookup = {}
 
     # Add hard-coded alleles
     includeSequences, alleleDescriptionLookup = getIncludeSequenceList(imgtReleaseVersion=imgtReleaseVersion)
@@ -141,8 +142,8 @@ def createReferenceSequences(clusteredFullLenAlleleSequences=None, verbose=False
                     alreadyHaveReference = True
                     break
             if not alreadyHaveReference:
-                # Take the first sequence available. Skip DPB1 and add other exceptions if I need it.
-                if ( (locus=='HLA-DPB1' and alleleGroup != '01')
+                # Take the first sequence available. Skip for MICA & MICB, and DPB1 (hand picked alleles)
+                if ( (locus=='HLA-DPB1')
                     or (locus in ['HLA-MICA','MICA'] and alleleGroup != '001')
                     or (locus in ['HLA-MICB','MICB'] and alleleGroup != '004') ):
                     if(verbose):
@@ -153,7 +154,7 @@ def createReferenceSequences(clusteredFullLenAlleleSequences=None, verbose=False
                         print('adding sequence ' + clusteredFullLenAlleleSequences[locus][alleleGroup][0].alleleName
                             + ' as a reference for group ' + str(alleleGroupFull))
 
-    return referenceSequences, missingSequences
+    return referenceSequences, missingSequences, alleleDescriptionLookup
 
 def downloadImgtXml(outputDirectory=None, release=None, verbose=False):
     print('Downloading IPD-IMGT/HLA xml file for release ' + str(release))
@@ -233,7 +234,7 @@ def getIncludeSequenceList(imgtReleaseVersion=None):
     # SHould still include B*15:01 if possible.
     includeSequences.append('HLA-B*15:10:01:01')
     includeSequences.append('HLA-B*15:01:01:01')
-    alleleDescriptionLookup['HLA-B*15:10:01:01'] = 'B71 Serotype Reference'
+    alleleDescriptionLookup['HLA-B*15:10:01:01'] = 'B70 Serotype Reference'
 
     # Kazu's suggestion, indeed this sequence has longest UTRs.
     includeSequences.append('HLA-B*27:05:02:01')
@@ -254,37 +255,34 @@ def getIncludeSequenceList(imgtReleaseVersion=None):
     if(imgtReleaseVersion in ['3.25.0','3.26.0']):
         includeSequences.append('HLA-A*74:02:01:02')
 
-    # # Starting in release 3.27.0 there is a full length DPB1*01 reference. Before that we use DPB1*02:01:02 for continuity
-    if(imgtReleaseVersion in ['3.25.0','3.26.0']):
+    # Hand-selecting 4 DP alleles to use that represent the four serological groups according to Cano and Fernandez-Vina
+    # Full-Length DPB1*01:01:01 is available starting in 3.27.0. 4 fields starting in 3.28.0
+    if(imgtReleaseVersion in ['3.25.0', '3.26.0']):
+        pass
+    elif(imgtReleaseVersion in ['3.27.0']):
+        includeSequences.append('HLA-DPB1*01:01:01')
+        alleleDescriptionLookup['HLA-DPB1*01:01:01'] = 'DP1 Serological Category Reference'
+    else:
+        includeSequences.append('HLA-DPB1*01:01:01:01')
+        alleleDescriptionLookup['HLA-DPB1*01:01:01:01'] = 'DP1 Serological Category Reference'
+
+    # HLA-DPB1*02:01:02:01 and HLA-DPB1*03:01:01:01 Given 4 field name in 3.28.0
+    if (imgtReleaseVersion in ['3.25.0', '3.26.0', '3.27.0']):
         includeSequences.append('HLA-DPB1*02:01:02')
+        alleleDescriptionLookup['HLA-DPB1*02:01:02'] = 'DP2 Serological Category Reference'
+        includeSequences.append('HLA-DPB1*03:01:01')
+        alleleDescriptionLookup['HLA-DPB1*03:01:01'] = 'DP3 Serological Category Reference'
+    else:
+        includeSequences.append('HLA-DPB1*02:01:02:01')
+        alleleDescriptionLookup['HLA-DPB1*02:01:02:01'] = 'DP2 Serological Category Reference'
+        includeSequences.append('HLA-DPB1*03:01:01:01')
+        alleleDescriptionLookup['HLA-DPB1*03:01:01:01'] = 'DP3 Serological Category Reference'
+
+    # 'HLA-DPB1*04:01:01:01' has been available as full length since at least 3.25.0
+    includeSequences.append('HLA-DPB1*04:01:01:01')
+    alleleDescriptionLookup['HLA-DPB1*04:01:01:01'] = 'DP4 Serological Category Reference'
 
     return sorted(list(set(includeSequences))), alleleDescriptionLookup
-
-# TODO: Since we're no longer reading the 17th ws list, this isn't necessary. This is only alleles excluded from 17th list.
-'''
-def getExcludeSequenceList(imgtReleaseVersion=None):
-    excludeSequenceList = []
-
-    # These are hard-coded alleles that are excluded from the reference lists.
-
-    # Starting in release 3.26.0 there is a full length HLA-B*41:01:01 reference,
-    # So, B*40:305 is not needed.
-    if(imgtReleaseVersion not in ['3.25.0']):
-        excludeSequenceList.append('HLA-B*40:305')
-
-    # Starting in release 3.27.0 there is a full length DPB1*01 reference
-    # So, DPB1*02:01:01 are not needed.
-    if(imgtReleaseVersion not in ['3.25.0','3.26.0']):
-        excludeSequenceList.append('HLA-DPB1*02:01:02')
-
-    # Starting in release 3.29.0, there is a full-length DPA1:01:03:01:01, used as standard locus reference.
-    # Stop using DPA1:01:03:01:02
-    if (imgtReleaseVersion not in ['3.25.0', '3.26.0', '3.27.0', '3.28.0']):
-        excludeSequenceList.append('HLA-DPA1*01:03:01:02')
-
-
-    return list(set(excludeSequenceList))
-'''
 
 def printSequenceDetails(alleleSequences=None, outputFilename=None, verbose=False, delimiter='\t', imgtReleaseVersion=None):
     if(verbose):
@@ -391,9 +389,9 @@ if __name__ == '__main__':
     if(args.supplementary):
         printSequences(alleleSequences=alleleSequences, outputFilename=join(supplementalFileDirectory,str(args.release) + '_FullLengthSequences.fasta'), verbose=verbose)
     alleleSequenceClusters=clusterSequences(alleleSequences=alleleSequences,verbose=verbose)
-    newReferenceSequences, missingSequences = createReferenceSequences(clusteredFullLenAlleleSequences=alleleSequenceClusters, verbose=verbose, imgtReleaseVersion=args.release)
+    newReferenceSequences, missingSequences, alleleDescriptionLookup = createReferenceSequences(clusteredFullLenAlleleSequences=alleleSequenceClusters, verbose=verbose, imgtReleaseVersion=args.release)
     printSequences(alleleSequences=newReferenceSequences, outputFilename=join(outputDirectory, str(args.release) + '_ReferenceSequences.fasta'), verbose=verbose)
-    printSequenceList(alleleSequences=newReferenceSequences, databaseVersion=args.release, outputDirectory=outputDirectory, verbose=verbose, fileVersion=args.version)
+    printSequenceList(alleleSequences=newReferenceSequences, databaseVersion=args.release, outputDirectory=outputDirectory, verbose=verbose, fileVersion=args.version, alleleDescriptionLookup=alleleDescriptionLookup)
     if (args.supplementary):
         printSequenceDetails(alleleSequences=alleleSequences, outputFilename=join(supplementalFileDirectory, 'FullLengthSequenceDetails.csv'), verbose=verbose, imgtReleaseVersion=args.release)
         printSequenceDetails(alleleSequences=newReferenceSequences, outputFilename=join(supplementalFileDirectory, 'ReferenceSequenceDetails.csv'), verbose=verbose, imgtReleaseVersion=args.release)

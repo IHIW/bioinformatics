@@ -1,6 +1,6 @@
 # filename: 3.35.0_Reference_Alleles.txt
-# date: 2021-01-04
-# version: 1.2
+# date: 2021-01-21
+# version: 1.3
 # author: Ben Matern <B.M.Matern@umcutrecht.nl>
 IMGT/HLA Database 3.35.0 Accession Number	Locus	IMGT/HLA Database 3.35.0 Allele Name	Description
 HLA00001	HLA-A	HLA-A*01:01:01:01	HLA-A Locus Reference;A*01 Reference
@@ -82,7 +82,10 @@ HLA00499	HLA-DPA1	HLA-DPA1*01:03:01:01	HLA-DPA1 Locus Reference;DPA1*01 Referenc
 HLA00504	HLA-DPA1	HLA-DPA1*02:01:01:01	DPA1*02 Reference
 HLA00511	HLA-DPA1	HLA-DPA1*03:01:01	DPA1*03 Reference
 HLA00513	HLA-DPA1	HLA-DPA1*04:01	DPA1*04 Reference
-HLA00514	HLA-DPB1	HLA-DPB1*01:01:01:01	HLA-DPB1 Locus Reference;DPB1*01 Reference
+HLA00514	HLA-DPB1	HLA-DPB1*01:01:01:01	HLA-DPB1 Locus Reference;DP1 Serological Category Reference
+HLA00517	HLA-DPB1	HLA-DPB1*02:01:02:01	DP2 Serological Category Reference
+HLA00520	HLA-DPB1	HLA-DPB1*03:01:01:01	DP3 Serological Category Reference
+HLA00521	HLA-DPB1	HLA-DPB1*04:01:01:01	DP4 Serological Category Reference
 HLA00601	HLA-DQA1	HLA-DQA1*01:01:01:01	HLA-DQA1 Locus Reference;DQA1*01 Reference
 HLA00607	HLA-DQA1	HLA-DQA1*02:01:01:01	DQA1*02 Reference
 HLA00608	HLA-DQA1	HLA-DQA1*03:01:01	DQA1*03 Reference
