@@ -35,7 +35,7 @@ def printSequenceList(alleleSequences=None, databaseVersion=None, outputDirector
     outputFile.write('# date: ' + datetime.today().strftime('%Y-%m-%d') + '\n')
     outputFile.write('# version: ' + str(fileVersion) + '\n')
     outputFile.write('# author: ' + str('Ben Matern <B.M.Matern@umcutrecht.nl>') + '\n')
-    outputFile.write('IMGT/HLA Database ' + str(databaseVersion) + ' Accession Number\tLocus\tIMGT/HLA Database ' + str(databaseVersion) + ' Allele Name\tDescription\n')
+    outputFile.write('IPD-IMGT/HLA Database ' + str(databaseVersion) + ' Accession Number\tLocus\tIPD-IMGT/HLA Database ' + str(databaseVersion) + ' Allele Name\tDescription\n')
 
     locusReferences = getLocusReferences()
 
@@ -384,7 +384,7 @@ if __name__ == '__main__':
     #  I am naming files based on the "0" version but there might be 3.42.1 for example.
     #  Not completely accurate but its more consistent this way. May cause confusion.
     if(databaseVersion != args.release):
-        print('Warning! the latest IMGT/HLA xml file shows a different (newer?) release date ('
+        print('Warning! the latest IPD-IMGT/HLA xml file shows a different (newer?) release date ('
               + str(databaseVersion) + ') than the provided release version (' + str(args.release) + ')')
     if(args.supplementary):
         printSequences(alleleSequences=alleleSequences, outputFilename=join(supplementalFileDirectory,str(args.release) + '_FullLengthSequences.fasta'), verbose=verbose)

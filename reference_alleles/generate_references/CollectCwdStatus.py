@@ -185,7 +185,6 @@ def writeOutputFile(outputFileName=None, alleleNames=None, cwd1Lookup=None
                     , cwdChinaLookup=None):
     with open(outputFileName,'w') as outputFile:
         # Header
-        # TODO: Add more info in the header here. DOI #, Loci represented. Description of what the columns mean.
         outputFile.write('Allele Name'
             + delimiter + '"CWD 1.0.0\nhttps://doi.org/10.1016/j.humimm.2007.01.014\nLoci:HLA-A,-B,-C,-DRB1,-DRB3,-DRB4,-DRB5,-DQA1,-DQB1,-DPB1"'
             + delimiter + '"CWD 2.0.0\nhttps://doi.org/10.1111/tan.12093\nLoci:HLA-A,-B,-C,-DRB1,-DRB3,-DRB4,-DRB5,-DQA1,-DQB1,-DPA1,-DPB1"'

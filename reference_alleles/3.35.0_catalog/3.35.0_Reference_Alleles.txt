@@ -2,7 +2,7 @@
 # date: 2021-01-21
 # version: 1.3
 # author: Ben Matern <B.M.Matern@umcutrecht.nl>
-IMGT/HLA Database 3.35.0 Accession Number	Locus	IMGT/HLA Database 3.35.0 Allele Name	Description
+IPD-IMGT/HLA Database 3.35.0 Accession Number	Locus	IPD-IMGT/HLA Database 3.35.0 Allele Name	Description
 HLA00001	HLA-A	HLA-A*01:01:01:01	HLA-A Locus Reference;A*01 Reference
 HLA00005	HLA-A	HLA-A*02:01:01:01	A*02 Reference
 HLA00037	HLA-A	HLA-A*03:01:01:01	A*03 Reference
