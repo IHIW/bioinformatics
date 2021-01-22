@@ -1,5 +1,5 @@
 # filename: 3.43.0_Reference_Alleles.txt
-# date: 2021-01-21
+# date: 2021-01-22
 # version: 1.3
 # author: Ben Matern <B.M.Matern@umcutrecht.nl>
 IPD-IMGT/HLA Database 3.43.0 Accession Number	Locus	IPD-IMGT/HLA Database 3.43.0 Allele Name	Description
