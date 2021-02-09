@@ -17,7 +17,13 @@ As a general rule, HML documents should follow these guidelines for validation:
 * HML documents are validation against the NMDP gateway, which provides further guidelines for high quality data.
 
 ## Reference Sequences          
-Sequence data should be presented as an alignment against a known sequence. Sequences must be from a subset of full-length alleles chosen from a given release of IPD-IMGT/HLA alleles. Sequences chosen for the 18th IHIWS can be found [within this github repository](https://github.com/IHIW/bioinformatics/tree/master/reference_alleles)
+Sequence data should be presented as an alignment against a known sequence. Sequences must be from a subset of full-length alleles chosen from the IPD-IMGT/HLA Database. 
+
+Robinson, J, Barker, DJ, Georgiou, X, Cooper, MA, Flicek, P, Marsh, SGE\
+The IPD-IMGT/HLA Database\
+Nucleic Acids Research (2020) 43:D948-D955
+
+Sequences chosen for the 18th IHIWS can be found [within this github repository](https://github.com/IHIW/bioinformatics/tree/master/reference_alleles)
 
 * Submission of known sequences that match known alleles, over the full length of the submitted sequence can be reported as matching the known allele sequence from IPD-IMGT/HLA
 * The reference sequence should be chosen based on homology to the submitted sequence. Choosing a sequence based on either exon homology or full-length sequence homology is acceptable.
