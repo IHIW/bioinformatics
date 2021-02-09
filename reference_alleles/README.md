@@ -3,8 +3,8 @@ This repository contains selected reference sequences to be used in creating HLA
 
 All 18th International HLA and Immunogenetics Workshop database functions used a subset of the [IPD-IMGT/HLA Database](https://www.ebi.ac.uk/ipd/imgt/hla/) sequence information.
 
-Robinson, J, Barker, DJ, Georgiou, X, Cooper, MA, Flicek, P, Marsh, SGE
-The IPD-IMGT/HLA Database
+Robinson, J, Barker, DJ, Georgiou, X, Cooper, MA, Flicek, P, Marsh, SGE\
+The IPD-IMGT/HLA Database\
 Nucleic Acids Research (2020) 43:D948-D955
 
 These reference sequences were selected using [a set of python scripts](https://github.com/IHIW/bioinformatics/tree/master/reference_alleles/generate_references), which choose the lowest-numbered full-length sequence available in a given IPD-IMGT/HLA release. 
