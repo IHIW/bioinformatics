@@ -21,3 +21,37 @@ The designated reference sequences can be downloaded from the [IPD-IMGT/HLA Data
 ## Reference Sequences and HML documents for the 18th IHIWS
 More guidelines, including database versions and sequences reference sequences in HML documents can be found in the file in [18IHIWS_Vendor_Genotyping_Requirements](https://github.com/IHIW/bioinformatics/blob/master/reference_alleles/18IHIWS_Vendor_Genotyping_Requirements.md)
 
+## Usage
+
+###Inputs:
+IPD-IMGT/HLA Database release version.\
+###Outputs:
+X.XX.X_Reference_Alleles.txt (A list of reference alleles)\
+X.XX.X_Reference_Sequences.fasta (The sequence of each designated reference allele)
+
+###Options/Flags:
+--validate\
+Validate the reference sequences by aligning full length sequences to the chosen references using BLAST.
+Output the validation results to ReferenceFinderValidationResults.csv
+This CSV shows A mapping of this release's full-length sequences to their closest chosen references
+
+--supplemental\
+Keep all supplemental files. Including:
+IMGT/HLA zip and XML files.
+A fasta containing the full-length allele sequences from this release
+X.XX.X_Missing_Reference_Alleles.txt (Alleles from the previous reference sequence that were not found in this release)
+
+--blast\
+Keep all BLAST alignment XMLS
+Warning, this generates several gigabytes of output data):
+--verbose
+more output text
+
+###Prerequisites:
+(other versions likely work)\
+Python 3.6\
+pip\
+Biopython 1.78 (biopython)\
+NCBI Blast commandline 2.6.0+\
+requests\
+zipfile\
