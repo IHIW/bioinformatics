@@ -25,14 +25,14 @@ More guidelines, including database versions and sequences reference sequences i
 
 ## Usage
 
-###Inputs:
+### Inputs:
 IPD-IMGT/HLA Database release version.
 
-###Outputs:
+### Outputs:
 X.XX.X_Reference_Alleles.txt (A list of reference alleles)\
 X.XX.X_Reference_Sequences.fasta (The sequence of each designated reference allele)
 
-###Options/Flags:
+### Options/Flags:
 --validate\
 Validate the reference sequences by aligning full length sequences to the chosen references using BLAST.
 Output the validation results to ReferenceFinderValidationResults.csv
@@ -50,7 +50,7 @@ Warning, this generates several gigabytes of output data):
 --verbose
 more output text
 
-###Prerequisites:
+### Prerequisites:
 (other versions likely work)\
 Python 3.6\
 pip\
