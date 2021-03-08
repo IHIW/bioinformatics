@@ -12,7 +12,7 @@ HML Documents that are uploaded to the [workshop database](https://data.ihiws.or
 As a general rule, HML documents should follow these guidelines for validation:
 
 * Documents must conform to the [HML Schema](http://schemas.nmdp.org/spec/hml/1.0.1/hml-1.0.1.xsd).
-* Documents should follow the [MIRING](miring.b12x.org) guidelines ([Mack et al., 2015](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4674382/)).
+* Documents should follow the [MIRING](http://miring.b12x.org) guidelines ([Mack et al., 2015](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4674382/)).
 * Genotypes should be reported as valid GLStrings ([Milius et al., 2013](https://pubmed.ncbi.nlm.nih.gov/23849068/)).
 * HML documents are validation against the NMDP gateway, which provides further guidelines for high quality data.
 
