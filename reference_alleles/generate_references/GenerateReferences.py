@@ -255,32 +255,32 @@ def getIncludeSequenceList(imgtReleaseVersion=None):
     if(imgtReleaseVersion in ['3.25.0','3.26.0']):
         includeSequences.append('HLA-A*74:02:01:02')
 
-    # Hand-selecting 4 DP alleles to use that represent the four serological groups according to Cano and Fernandez-Vina
+    # Hand-selecting 4 DP alleles to use that represent the four categories according to Cano and Fernandez-Vina
     # Full-Length DPB1*01:01:01 is available starting in 3.27.0. 4 fields starting in 3.28.0
     if(imgtReleaseVersion in ['3.25.0', '3.26.0']):
         pass
     elif(imgtReleaseVersion in ['3.27.0']):
         includeSequences.append('HLA-DPB1*01:01:01')
-        alleleDescriptionLookup['HLA-DPB1*01:01:01'] = 'DP1 Serological Category Reference'
+        alleleDescriptionLookup['HLA-DPB1*01:01:01'] = 'DP1 Category Reference'
     else:
         includeSequences.append('HLA-DPB1*01:01:01:01')
-        alleleDescriptionLookup['HLA-DPB1*01:01:01:01'] = 'DP1 Serological Category Reference'
+        alleleDescriptionLookup['HLA-DPB1*01:01:01:01'] = 'DP1 Category Reference'
 
     # HLA-DPB1*02:01:02:01 and HLA-DPB1*03:01:01:01 Given 4 field name in 3.28.0
     if (imgtReleaseVersion in ['3.25.0', '3.26.0', '3.27.0']):
         includeSequences.append('HLA-DPB1*02:01:02')
-        alleleDescriptionLookup['HLA-DPB1*02:01:02'] = 'DP2 Serological Category Reference'
+        alleleDescriptionLookup['HLA-DPB1*02:01:02'] = 'DP2 Category Reference'
         includeSequences.append('HLA-DPB1*03:01:01')
-        alleleDescriptionLookup['HLA-DPB1*03:01:01'] = 'DP3 Serological Category Reference'
+        alleleDescriptionLookup['HLA-DPB1*03:01:01'] = 'DP3 Category Reference'
     else:
         includeSequences.append('HLA-DPB1*02:01:02:01')
-        alleleDescriptionLookup['HLA-DPB1*02:01:02:01'] = 'DP2 Serological Category Reference'
+        alleleDescriptionLookup['HLA-DPB1*02:01:02:01'] = 'DP2 Category Reference'
         includeSequences.append('HLA-DPB1*03:01:01:01')
-        alleleDescriptionLookup['HLA-DPB1*03:01:01:01'] = 'DP3 Serological Category Reference'
+        alleleDescriptionLookup['HLA-DPB1*03:01:01:01'] = 'DP3 Category Reference'
 
     # 'HLA-DPB1*04:01:01:01' has been available as full length since at least 3.25.0
     includeSequences.append('HLA-DPB1*04:01:01:01')
-    alleleDescriptionLookup['HLA-DPB1*04:01:01:01'] = 'DP4 Serological Category Reference'
+    alleleDescriptionLookup['HLA-DPB1*04:01:01:01'] = 'DP4 Category Reference'
 
     return sorted(list(set(includeSequences))), alleleDescriptionLookup
 
