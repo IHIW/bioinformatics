@@ -17,7 +17,7 @@ As a general rule, HML documents should follow these guidelines for validation:
 * HML documents are validation against the NMDP gateway, which provides further guidelines for high quality data.
 
 ## Reference Sequences          
-Sequence data should be presented as an alignment against a known sequence. Sequences must be from a subset of full-length alleles chosen from a given release of IPD-IMGT/HLA alleles. Sequences chosen for the 18th IHIWS can be found [within this github repository](https://github.com/IHIW/bioinformatics/tree/master/reference_alleles)
+Sequence data should be presented as an alignment against a known sequence. Sequences must be from a subset of full-length alleles chosen from a given release of IPD-IMGT/HLA alleles. Sequences chosen for the 18th IHIWS can be found in the [Anthony Nolan HLA Informatics Group Github repository.](https://github.com/ANHIG/IMGTHLA/tree/Latest/ihiw/hml)
 
 * Submission of known sequences that match known alleles, over the full length of the submitted sequence can be reported as matching the known allele sequence from IPD-IMGT/HLA
 * The reference sequence should be chosen based on homology to the submitted sequence. Choosing a sequence based on either exon homology or full-length sequence homology is acceptable.
@@ -25,17 +25,18 @@ Sequence data should be presented as an alignment against a known sequence. Sequ
 * If the sequence is typed as a known allele, but the allele is not on the provided list of reference sequences, allele variants should be reported relative to one of the provided full-length IPD-IMGT/HLA sequences. The interpreted genotype can be provided as a GLString.
 * If the submittd sequence is reported outside the region of the reference sequence, such as in extended UTRs, the extra sequence can be reported as an insertion at the beginning or end of the reference.
 
-## IPD-IMGT/HLA Releases
+## IPD-IMGT/HLA Database Releases
 HML Documents will specify the release version of the IPD-IMGT/HLA database. The chosen release should be recent, to hopefully provide some consistency in data interpretation.
 
 * If possible, use release version 3.39.0 or later for the submission of HML documents for the 18th IHIWS
 	* We will support future IPD-IMGT/HLA releases up to and including the versions released during the Workshop in May 2022.
 * Reference sequences are also provided for each IPD-IMGT/HLA release since 3.26.0, mostly for historical and analysis reasons. Versions 3.26.0-3.38.0 are discouraged for the 18th IHIWS.
+* Designated reference sequence lists for historical releases of the IPD-IMGT/HLA Database can be found in other branches in the [Anthony Nolan HLA Informatics Group Github repository.](https://github.com/ANHIG/IMGTHLA/tree/Latest/ihiw/hml).
 
 ## Potential Issues:
 There are many strategies on the correct way to present data and choose reference sequences, and many strategies have merit. There are also potential difficulties and ambiguities.
 
-* How should I report a novel allele in a clinically relevent way? 
+* How should I report a novel allele in a clinically relevant way? 
 	* It is valuable to use a reference sequence that is clinically similar to the reported sequence.
 	* The submitter may use a reference sequence, from the provided list of full-length references, that is likely to be clinically similar to the submitted sequence.
 		* Likely, this would match in exon sequences.

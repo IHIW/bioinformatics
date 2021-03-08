@@ -13,18 +13,21 @@ For these purposes, "full length" refers to the 'genomic' sequences curated by t
 
 A list of designated reference sequences for each major release, starting with 3.26.0.  Reference sequences will be provided for for each IPD-IMGT/HLA release up to, and soon after the 18th IHIWS.
 
-## Loci
-Reference alleles are provided for each HLA locus (HLA-A, -B, -C, -E, -F, -G, -DPA1, -DPB1, -DQA1, -DQB1, -DRA, -DRB1, -DRB3, -DRB4 and -DRB5) When available, sequences are also provided for the MICA and MICB loci, as well as HLA-DMA, -DMB, -DOA, -DOB. For each release starting with 3.26.0, this catalog is available in this repository as [A list of alleles, ordered by locus and allele name](https://github.com/IHIW/bioinformatics/blob/master/reference_alleles/3.42.0_catalog/3.42.0_Reference_Alleles.txt)
+These allele lists are hosted at the [Anthony Nolan HLA Informatics Group Github repository.](https://github.com/ANHIG/IMGTHLA/tree/Latest/ihiw/hml)
 
-The designated reference sequences can be downloaded from the [IPD-IMGT/HLA Database](https://www.ebi.ac.uk/ipd/imgt/hla/)
+## Loci
+Reference alleles are provided for each HLA locus (HLA-A, -B, -C, -E, -F, -G, -DPA1, -DPB1, -DQA1, -DQB1, -DRA, -DRB1, -DRB3, -DRB4 and -DRB5) When available, sequences are also provided for the MICA and MICB loci, as well as HLA-DMA, -DMB, -DOA, -DOB. For each release starting with 3.26.0, this catalog is available in this repository as [A list of alleles, ordered by locus and allele name. A fasta file containing the nucleotide sequences is also available for download.](https://github.com/ANHIG/IMGTHLA/tree/Latest/ihiw/hml) Reference sequence lists for historical releases of the IPD-IMGT/HLA Database can be found in other branches in that repository.
+
+The designated reference sequences are hosted by the [IPD-IMGT/HLA Database](https://www.ebi.ac.uk/ipd/imgt/hla/), and can be downloaded from [Anthony Nolan HLA Informatics Group Github repository.](https://github.com/ANHIG/IMGTHLA/tree/Latest/ihiw/hml) 
 
 ## Reference Sequences and HML documents for the 18th IHIWS
-More guidelines, including database versions and sequences reference sequences in HML documents can be found in the file in [18IHIWS_Vendor_Genotyping_Requirements](https://github.com/IHIW/bioinformatics/blob/master/reference_alleles/18IHIWS_Vendor_Genotyping_Requirements.md)
+More guidelines, including database versions and sequences reference sequences in HML documents can be found in the file in [18IHIWS_Vendor_Genotyping_Requirements](https://github.com/IHIW/bioinformatics/blob/master/reference_alleles/18IHIWS_Vendor_Genotyping_Requirements.md) 
 
 ## Usage
 
 ###Inputs:
-IPD-IMGT/HLA Database release version.\
+IPD-IMGT/HLA Database release version.
+
 ###Outputs:
 X.XX.X_Reference_Alleles.txt (A list of reference alleles)\
 X.XX.X_Reference_Sequences.fasta (The sequence of each designated reference allele)
@@ -54,4 +57,4 @@ pip\
 Biopython 1.78 (biopython)\
 NCBI Blast commandline 2.6.0+\
 requests\
-zipfile\
+zipfile
