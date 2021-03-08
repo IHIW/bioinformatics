@@ -4,7 +4,7 @@ When reporting HLA genotyping for the [18th IHIWS](https://www.ihiw18.org/), it 
 These guidelines are for the community; Your questions, comments, complaints, and suggestions are welcomed and encouraged. Please send them to Ben Matern (B.M.Matern@umcutrecht.nl) or Eric Spierings (E.Spierings@umcutrecht.nl)
 
 ## HML
-HLA genotyping data should be provided in the [HML 1.0.1 format](schemas.nmdp.org) ([Milius et al., 2015](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4674307/)). This format is described by an [XML Schema](http://schemas.nmdp.org/spec/hml/1.0.1/hml-1.0.1.xsd), and facilitates the transmission of the most important data related to the protocols, sequence, and interpretation involved in creating the genotyping result. The schema is strict in it's data format, but allows a wide variety of data to be included.
+HLA genotyping data should be provided in the [HML 1.0.1 format](http://schemas.nmdp.org) ([Milius et al., 2015](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4674307/)). This format is described by an [XML Schema](http://schemas.nmdp.org/spec/hml/1.0.1/hml-1.0.1.xsd), and facilitates the transmission of the most important data related to the protocols, sequence, and interpretation involved in creating the genotyping result. The schema is strict in it's data format, but allows a wide variety of data to be included.
 
 HML Documents that are uploaded to the [workshop database](https://data.ihiws.org/) are validated according to some sets of standards.
 
