@@ -360,6 +360,7 @@ if __name__ == '__main__':
     parser.add_argument("-r", "--release", required=True, help="IPD-IMGT/HLA release version", type=str)
     parser.add_argument("-o", "--output", required=True, help="Output Directory", type=str)
     parser.add_argument("-t", "--threads", required=False, help="Processor Threads", type=int, default=1)
+    parser.add_argument("-l", "--localfile", required=False, help="location of (unzipped) local hla.xml file. If this is not provided, we will download file from github", type=str)
 
     args = parser.parse_args()
     verbose = args.verbose
@@ -377,7 +378,15 @@ if __name__ == '__main__':
     if verbose:
         print("Running in verbose mode.")
 
-    xmlFileLocation = downloadImgtXml(outputDirectory=supplementalFileDirectory, release=args.release, verbose=verbose)
+
+    if(args.localfile is None or len(str(args.localfile))<1):
+        print('No Local File was provided. I will download the hla.xml from Github.')
+        xmlFileLocation = downloadImgtXml(outputDirectory=supplementalFileDirectory, release=args.release, verbose=verbose)
+    else:
+        print('Local file was provided:' + str(args.localfile))
+        xmlFileLocation=args.localfile
+
+
     alleleSequences, databaseVersion = parseXmlFile(xmlFile=xmlFileLocation,fullLengthOnly=True, verbose=verbose)
 
     # TODO: The database version from the XML file may be slightly different than the provided release number, due to minor versioning.
