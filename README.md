@@ -1,7 +1,7 @@
 # bioinformatics
 IHIW Bioinformatics Resources 
 
-This repository houses the formats and tools developed for the 17th Internatonal HLA and Immunogenetics Workshop, held in September of 2018. 
+This repository houses the formats and tools developed for the 17th International HLA and Immunogenetics Workshop, held in September of 2018. 
 
 Many of the resources housed here are described in depth in the following paper: 
 
