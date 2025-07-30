@@ -34,7 +34,7 @@ def printSequenceList(alleleSequences=None, databaseVersion=None, outputDirector
     outputFile.write('# filename: ' + str(outputFileNameShort) + '\n')
     outputFile.write('# date: ' + datetime.today().strftime('%Y-%m-%d') + '\n')
     outputFile.write('# version: ' + str(fileVersion) + '\n')
-    outputFile.write('# author: ' + str('Ben Matern <B.M.Matern@umcutrecht.nl>') + '\n')
+    outputFile.write('# author: ' + str('Ben Matern (Contact the IPD Team: ipdsubs@anthonynolan.org)') + '\n')
     outputFile.write('IPD-IMGT/HLA Database ' + str(databaseVersion) + ' Accession Number\tLocus\tIPD-IMGT/HLA Database ' + str(databaseVersion) + ' Allele Name\tDescription\n')
 
     locusReferences = getLocusReferences()
