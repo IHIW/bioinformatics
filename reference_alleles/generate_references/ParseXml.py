@@ -18,7 +18,10 @@ def parseXmlFile(xmlFile=None, fullLengthOnly=True, verbose=False):
     documentRoot = ElementTree.parse(xmlFile).getroot()
     if(verbose):
         print(str(len(documentRoot)) + ' allele nodes found.')
-    for index, alleleNode in enumerate(documentRoot):
+    alleles = documentRoot.find('{http://hla.alleles.org/xml}alleles')
+    if alleles is None:
+        raise Exception('No "alleles" element found in the XML document.')
+    for index, alleleNode in enumerate(alleles):
         currentAllele = AlleleSequence()
         currentAllele.alleleName = alleleNode.get('name')
         currentAllele.accessionNumber =alleleNode.get('id')
